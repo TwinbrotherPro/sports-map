@@ -1,0 +1,187 @@
+import { Button, makeStyles } from "@material-ui/core";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import * as leaflet from "leaflet";
+import * as decoding from "polyline-encoded";
+import { Fragment, useState } from "react";
+import {
+  MapContainer,
+  Marker,
+  Polyline,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
+
+const useStyles = makeStyles(() => ({
+  parent: {},
+  marker: { color: "green", textAlign: "left" },
+  control: {
+    paddingRight: "50%",
+  },
+  button: { margin: 5 },
+  stravaBackLink: {
+    "& a:link, a:visited": {
+      color: "#FC4C02",
+      textDecoration: "none",
+    },
+    "& a:hover": {
+      color: "#ca3e02",
+      textDecoration: "none",
+    },
+  },
+}));
+
+const typeColors = {
+  Hike: "blue",
+  Run: "green",
+  Ride: "red",
+};
+
+function ActivityMaker({ activity, activityIndex, setCurrentActivityIndex }) {
+  const classes = useStyles();
+
+  const map = useMap();
+  const onClickMarker = {
+    click: (event) => {
+      map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
+        animate: true,
+        duration: 1,
+      });
+      setCurrentActivityIndex(activityIndex);
+    },
+  };
+
+  if (!activity.map.summary_polyline) {
+    return null;
+  }
+
+  return (
+    <Fragment key={activity.id}>
+      <Polyline positions={decoding.decode(activity.map.summary_polyline)} />
+      <Marker position={activity.start_latlng} eventHandlers={onClickMarker}>
+        <Popup>
+          <div>
+            <div>{activity.name}</div>
+            <div>
+              {Number.parseFloat((activity.distance / 1000).toString()).toFixed(
+                2
+              )}{" "}
+              km
+            </div>
+            <div>
+              {Number.parseFloat(
+                (activity.elapsed_time / 60).toString()
+              ).toFixed(1)}{" "}
+              minutes
+            </div>
+            <div className={classes.stravaBackLink}>
+              <a
+                href={`https://www.strava.com/activities/${activity.id}`}
+                target="_blank"
+              >
+                View on Strava
+              </a>
+            </div>
+          </div>
+        </Popup>
+      </Marker>
+    </Fragment>
+  );
+}
+
+function ControlMenu({
+  outerBounds,
+  currentActivityIndex,
+  setCurrentActivityIndex,
+  activities,
+}) {
+  const classes = useStyles();
+  const classNames = `leaflet-bottom leaflet-right control ${classes.control}`;
+  const map = useMap();
+
+  const onClickBack = () => {
+    map.flyToBounds(outerBounds, { animate: true, duration: 1.5 });
+    setCurrentActivityIndex(null);
+  };
+
+  const onClickNext = () => {
+    let current;
+    if (
+      currentActivityIndex === null ||
+      currentActivityIndex + 1 >= activities.length
+    ) {
+      console.log("test");
+      current = 0;
+    } else {
+      current = currentActivityIndex + 1;
+    }
+    console.log("CurrentIndey", current);
+    console.log("Current", activities[current]);
+    map.flyToBounds(decoding.decode(activities[current].map.summary_polyline), {
+      animate: true,
+      duration: 1,
+    });
+    setCurrentActivityIndex(current);
+  };
+
+  return (
+    <div className={classNames}>
+      <div className="leaflet-control">
+        <Button variant="contained" color="secondary" onClick={onClickBack}>
+          Zoom out
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+          startIcon={<NavigateNextIcon />}
+          onClick={onClickNext}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({ activities }) {
+  const classes = useStyles();
+
+  const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
+  const outerBounds = activities.map((activity) => activity.start_latlng);
+  const leafletBounds = leaflet.latLngBounds(outerBounds);
+
+  const markers = activities.map((activity, index) => (
+    <ActivityMaker
+      activity={activity}
+      activityIndex={index}
+      setCurrentActivityIndex={setCurrentActivityIndex}
+    />
+  ));
+
+  console.log(activities);
+
+  return (
+    <MapContainer
+      bounds={leafletBounds}
+      zoom={13}
+      scrollWheelZoom={true}
+      // Load unprefixed css class
+      className="mapid"
+    >
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {markers}
+      <ControlMenu
+        activities={activities}
+        outerBounds={outerBounds}
+        currentActivityIndex={currentActivityIndex}
+        setCurrentActivityIndex={setCurrentActivityIndex}
+      />
+    </MapContainer>
+  );
+}
+
+export default Dashboard;

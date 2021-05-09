@@ -1,0 +1,16 @@
+[debug] [2021-06-08T20:21:15.233Z] ----------------------------------------------------------------------
+[debug] [2021-06-08T20:21:15.237Z] Command:       C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2021-06-08T20:21:15.238Z] CLI Version:   9.1.0
+[debug] [2021-06-08T20:21:15.238Z] Platform:      win32
+[debug] [2021-06-08T20:21:15.238Z] Node Version:  v12.13.0
+[debug] [2021-06-08T20:21:15.240Z] Time:          Tue Jun 08 2021 22:21:15 GMT+0200 (GMT+02:00)
+[debug] [2021-06-08T20:21:15.241Z] ----------------------------------------------------------------------
+[debug] [2021-06-08T20:21:15.241Z] 
+[debug] [2021-06-08T20:21:15.259Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-06-08T20:21:15.260Z] > authorizing via signed-in user
+[debug] [2021-06-08T20:21:15.261Z] [iam] checking project strava-dashboard-368b0 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2021-06-08T20:21:15.266Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/strava-dashboard-368b0:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2021-06-08T20:21:16.110Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 08 Jun 2021 20:21:15 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=633","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-08T20:21:16.114Z] >>> HTTP REQUEST POST https://iam.googleapis.com/v1/projects/strava-dashboard-368b0/serviceAccounts/strava-dashboard-368b0@appspot.gserviceaccount.com:testIamPermissions  
+ {"permissions":["iam.serviceAccounts.actAs"]}
