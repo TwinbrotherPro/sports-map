@@ -71,7 +71,7 @@ function AddActivityButton() {
   } = useQuery(
     "detailedActivities",
     async () => {
-      const yearBefore = moment().subtract(1, "year");
+      const yearBefore = moment().subtract(1, "year").unix();
       let currentPage = 1;
       let activities = [];
       let continuePaging = true;
@@ -83,7 +83,7 @@ function AddActivityButton() {
         const activityPage = await response.json();
         activities.push(...activityPage);
         currentPage++;
-        continuePaging = activityPage.length === 30;
+        continuePaging = activityPage.length === 100;
       }
       console.log(activities);
       return activities;

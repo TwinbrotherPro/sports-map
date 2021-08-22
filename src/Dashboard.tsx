@@ -37,7 +37,12 @@ const typeColors = {
   Ride: "red",
 };
 
-function ActivityMaker({ activity, activityIndex, setCurrentActivityIndex }) {
+function ActivityMaker({
+  activity,
+  activityIndex,
+  setCurrentActivityIndex,
+  isMarkersDisabled,
+}) {
   const classes = useStyles();
 
   const map = useMap();
@@ -58,33 +63,35 @@ function ActivityMaker({ activity, activityIndex, setCurrentActivityIndex }) {
   return (
     <Fragment key={activity.id}>
       <Polyline positions={decoding.decode(activity.map.summary_polyline)} />
-      <Marker position={activity.start_latlng} eventHandlers={onClickMarker}>
-        <Popup>
-          <div>
-            <div>{activity.name}</div>
+      {!isMarkersDisabled && (
+        <Marker position={activity.start_latlng} eventHandlers={onClickMarker}>
+          <Popup>
             <div>
-              {Number.parseFloat((activity.distance / 1000).toString()).toFixed(
-                2
-              )}{" "}
-              km
+              <div>{activity.name}</div>
+              <div>
+                {Number.parseFloat(
+                  (activity.distance / 1000).toString()
+                ).toFixed(2)}{" "}
+                km
+              </div>
+              <div>
+                {Number.parseFloat(
+                  (activity.elapsed_time / 60).toString()
+                ).toFixed(1)}{" "}
+                minutes
+              </div>
+              <div className={classes.stravaBackLink}>
+                <a
+                  href={`https://www.strava.com/activities/${activity.id}`}
+                  target="_blank"
+                >
+                  View on Strava
+                </a>
+              </div>
             </div>
-            <div>
-              {Number.parseFloat(
-                (activity.elapsed_time / 60).toString()
-              ).toFixed(1)}{" "}
-              minutes
-            </div>
-            <div className={classes.stravaBackLink}>
-              <a
-                href={`https://www.strava.com/activities/${activity.id}`}
-                target="_blank"
-              >
-                View on Strava
-              </a>
-            </div>
-          </div>
-        </Popup>
-      </Marker>
+          </Popup>
+        </Marker>
+      )}
     </Fragment>
   );
 }
@@ -94,6 +101,8 @@ function ControlMenu({
   currentActivityIndex,
   setCurrentActivityIndex,
   activities,
+  isMarkersDisabled,
+  setIsMarkersDisabled,
 }) {
   const classes = useStyles();
   const classNames = `leaflet-bottom leaflet-right control ${classes.control}`;
@@ -139,6 +148,16 @@ function ControlMenu({
         >
           Next
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+          onClick={() => {
+            setIsMarkersDisabled(!isMarkersDisabled);
+          }}
+        >
+          {isMarkersDisabled ? "Enable Markers" : "Disable Markers"}
+        </Button>
       </div>
     </div>
   );
@@ -150,12 +169,14 @@ function Dashboard({ activities }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
+  const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
 
   const markers = activities.map((activity, index) => (
     <ActivityMaker
       activity={activity}
       activityIndex={index}
       setCurrentActivityIndex={setCurrentActivityIndex}
+      isMarkersDisabled={isMarkersDisabled}
     />
   ));
 
@@ -179,6 +200,8 @@ function Dashboard({ activities }) {
         outerBounds={outerBounds}
         currentActivityIndex={currentActivityIndex}
         setCurrentActivityIndex={setCurrentActivityIndex}
+        isMarkersDisabled={isMarkersDisabled}
+        setIsMarkersDisabled={setIsMarkersDisabled}
       />
     </MapContainer>
   );
