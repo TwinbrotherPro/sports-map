@@ -40,6 +40,7 @@ const typeColors = {
 function ActivityMaker({
   activity,
   activityIndex,
+  currentActivityIndex,
   setCurrentActivityIndex,
   isMarkersDisabled,
 }) {
@@ -60,11 +61,44 @@ function ActivityMaker({
     return null;
   }
 
+  const blueIcon = new leaflet.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
+  const redIcon = new leaflet.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
   return (
     <Fragment key={activity.id}>
-      <Polyline positions={decoding.decode(activity.map.summary_polyline)} />
+      <Polyline
+        positions={decoding.decode(activity.map.summary_polyline)}
+        pathOptions={
+          currentActivityIndex === activityIndex
+            ? { color: "red" }
+            : { color: "blue" }
+        }
+      />
       {!isMarkersDisabled && (
-        <Marker position={activity.start_latlng} eventHandlers={onClickMarker}>
+        <Marker
+          position={activity.start_latlng}
+          eventHandlers={onClickMarker}
+          icon={currentActivityIndex === activityIndex ? redIcon : blueIcon}
+        >
           <Popup>
             <div>
               <div>{activity.name}</div>
@@ -124,8 +158,6 @@ function ControlMenu({
     } else {
       current = currentActivityIndex + 1;
     }
-    console.log("CurrentIndey", current);
-    console.log("Current", activities[current]);
     map.flyToBounds(decoding.decode(activities[current].map.summary_polyline), {
       animate: true,
       duration: 1,
@@ -175,6 +207,7 @@ function Dashboard({ activities }) {
     <ActivityMaker
       activity={activity}
       activityIndex={index}
+      currentActivityIndex={currentActivityIndex}
       setCurrentActivityIndex={setCurrentActivityIndex}
       isMarkersDisabled={isMarkersDisabled}
     />
