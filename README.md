@@ -1,6 +1,6 @@
 # Sports Map
 
-This project is a visualisation of a users Strava activities.
+This project is a visualisation of a users Strava activities. A deployed version can be found under https://strava-dashboard-368b0.web.app/.
 
 Technologies used:
 
@@ -8,6 +8,10 @@ Technologies used:
 - React Leaflet
 - React Query
 - Firebase (Hosting + Functions)
+
+Sports Map is meant as a side project to foster ReactJs knowledge and rapid application prototyping with Google Firebase.
+
+Any contribution is welcome. If you want to contribute pick one of the open issues or create a new issue for a feature request.
 
 ## Available Scripts
 
@@ -33,8 +37,6 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ### `yarn eject`
 
