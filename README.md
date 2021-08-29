@@ -6,6 +6,7 @@ Technologies used:
 
 - React
 - React Leaflet
+- Leaflet Color Markers https://github.com/pointhi/leaflet-color-markers
 - React Query
 - Firebase (Hosting + Functions)
 

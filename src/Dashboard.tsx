@@ -89,8 +89,8 @@ function ActivityMaker({
         positions={decoding.decode(activity.map.summary_polyline)}
         pathOptions={
           currentActivityIndex === activityIndex
-            ? { color: "red" }
-            : { color: "blue" }
+            ? { color: "#CB2B3E" }
+            : { color: "#2A81CB" }
         }
       />
       {!isMarkersDisabled && (

@@ -4,13 +4,14 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { Route, Router, Switch } from "react-router";
 import { createBrowserHistory } from "history";
 import AddActivityButton from "./AddActivityButton";
 import "./App.css";
 import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
-import RestoreIcon from "@material-ui/icons/Restore";
+import GithubIcon from "@material-ui/icons/GitHub";
+import InfoIcon from "@material-ui/icons/Info";
+import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
 
 const queryClient = new QueryClient();
 
@@ -43,8 +44,13 @@ function App() {
             </Route>
           </Switch>
         </Router>
-        <BottomNavigation value="Recents" className={classes.footer} showLabels>
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+        <BottomNavigation value="Home" className={classes.footer} showLabels>
+          <BottomNavigationAction
+            label="Home"
+            icon={<SettingsBackupRestoreIcon />}
+          />
+          <BottomNavigationAction label="About" icon={<InfoIcon />} />
+          <BottomNavigationAction label="Code" icon={<GithubIcon />} />
         </BottomNavigation>
         <div className={classes.banner}>
           <img

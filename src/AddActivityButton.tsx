@@ -42,7 +42,7 @@ function AddActivityButton() {
 
   const queryParams = new URLSearchParams(useLocation().search);
   const authCode = queryParams.get("code");
-  console.log(authCode);
+  queryParams.delete("code");
 
   const { data, status } = useQuery(
     "stravaAuth",
@@ -148,7 +148,6 @@ function AddActivityButton() {
   }
 
   if (activities) {
-    console.log(accessToken);
     return (
       <Fade timeout={100000}>
         <Dashboard activities={activities} />
