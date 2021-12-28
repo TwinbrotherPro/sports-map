@@ -1,18 +1,17 @@
 import {
-  Button,
   ButtonBase,
   CircularProgress,
-  Container,
   Fade,
   makeStyles,
   Paper,
 } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 import moment from "moment";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router";
+
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
-import Box from "@material-ui/core/Box";
 import connectButton from "./misc/btn_strava_connectwith_orange.svg";
 
 const useStyles = makeStyles({

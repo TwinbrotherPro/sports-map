@@ -12,6 +12,7 @@ import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.sv
 import GithubIcon from "@material-ui/icons/GitHub";
 import InfoIcon from "@material-ui/icons/Info";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,8 @@ function App() {
 
   const customHistory = createBrowserHistory();
 
+  const [navigationValue, setNavigationValue] = useState(0);
+
   return (
     <div className={classes.app}>
       <QueryClientProvider client={queryClient}>
@@ -44,7 +47,29 @@ function App() {
             </Route>
           </Switch>
         </Router>
-        <BottomNavigation value="Home" className={classes.footer} showLabels>
+        <BottomNavigation
+          value={navigationValue}
+          className={classes.footer}
+          showLabels
+          onChange={(_, newValue) => {
+            switch (newValue) {
+              case 0:
+                setNavigationValue(newValue);
+                customHistory.push("/");
+                break;
+              case 1:
+                setNavigationValue(-1);
+                window.open("https://philippkraus.me", "_blank");
+                break;
+              case 2:
+                setNavigationValue(-1);
+                window.open(
+                  "https://github.com/TwinbrotherPro/sports-map",
+                  "_blank"
+                );
+            }
+          }}
+        >
           <BottomNavigationAction
             label="Home"
             icon={<SettingsBackupRestoreIcon />}

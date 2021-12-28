@@ -1,6 +1,7 @@
 import { Button, makeStyles } from "@material-ui/core";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import * as leaflet from "leaflet";
+import moment from "moment";
 import * as decoding from "polyline-encoded";
 import { Fragment, useState } from "react";
 import {
@@ -14,7 +15,7 @@ import {
 
 const useStyles = makeStyles(() => ({
   parent: {},
-  marker: { color: "green", textAlign: "left" },
+  marker: { color: "green", textAlign: "left" }, // In use?
   control: {
     paddingRight: "50%",
   },
@@ -32,6 +33,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const typeColors = {
+  // TODO
   Hike: "blue",
   Run: "green",
   Ride: "red",
@@ -101,7 +103,12 @@ function ActivityMaker({
         >
           <Popup>
             <div>
-              <div>{activity.name}</div>
+              <div>
+                <b>{activity.name}</b>
+              </div>
+              <div>
+                {moment(activity.start_date).format("DD.MM.YYYY hh:mm A")}
+              </div>
               <div>
                 {Number.parseFloat(
                   (activity.distance / 1000).toString()
