@@ -49,7 +49,7 @@ function ActivityMaker({
   const classes = useStyles();
 
   const map = useMap();
-  const onClickMarker = {
+  const onClickHandler = {
     click: (event) => {
       map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
         animate: true,
@@ -94,11 +94,12 @@ function ActivityMaker({
             ? { color: "#CB2B3E" }
             : { color: "#2A81CB" }
         }
+        eventHandlers={onClickHandler}
       />
       {!isMarkersDisabled && (
         <Marker
           position={activity.start_latlng}
-          eventHandlers={onClickMarker}
+          eventHandlers={onClickHandler}
           icon={currentActivityIndex === activityIndex ? redIcon : blueIcon}
         >
           <Popup>
