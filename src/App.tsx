@@ -1,18 +1,20 @@
+import "./App.css";
+
 import {
   BottomNavigation,
   BottomNavigationAction,
   makeStyles,
 } from "@material-ui/core";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { Route, Router, Switch } from "react-router";
-import { createBrowserHistory } from "history";
-import AddActivityButton from "./AddActivityButton";
-import "./App.css";
-import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
 import GithubIcon from "@material-ui/icons/GitHub";
 import InfoIcon from "@material-ui/icons/Info";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
+import { createBrowserHistory } from "history";
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Route, Router, Switch } from "react-router";
+
+import AddActivityButton from "./AddActivityButton";
+import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,7 @@ const useStyles = makeStyles({
   footer: {},
   banner: {
     alignItems: "right",
+    backgroundColor: "white",
   },
 });
 
@@ -39,6 +42,13 @@ function App() {
 
   return (
     <div className={classes.app}>
+      <div className={classes.banner}>
+        <img
+          src={compatibleWithStrava}
+          style={{ height: "40px", float: "right" }}
+          alt="compatibleWithStrava"
+        />
+      </div>
       <QueryClientProvider client={queryClient}>
         <Router history={customHistory}>
           <Switch>
@@ -77,15 +87,9 @@ function App() {
           <BottomNavigationAction label="About" icon={<InfoIcon />} />
           <BottomNavigationAction label="Code" icon={<GithubIcon />} />
         </BottomNavigation>
-        <div className={classes.banner}>
-          <img
-            src={compatibleWithStrava}
-            style={{ height: "40px", float: "right" }}
-            alt="compatibleWithStrava"
-          />
-        </div>
       </QueryClientProvider>
     </div>
+    //<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   );
 }
 

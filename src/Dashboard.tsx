@@ -161,7 +161,6 @@ function ControlMenu({
       currentActivityIndex === null ||
       currentActivityIndex + 1 >= activities.length
     ) {
-      console.log("test");
       current = 0;
     } else {
       current = currentActivityIndex + 1;
