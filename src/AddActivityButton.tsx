@@ -3,12 +3,10 @@ import {
   CircularProgress,
   Fade,
   makeStyles,
-  Paper,
 } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router";
-
+import { useSearchParams } from "react-router-dom";
+import { MainPane } from "./components/MainPane";
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
 import connectButton from "./misc/btn_strava_connectwith_orange.svg";
@@ -21,26 +19,17 @@ const useStyles = makeStyles({
     width: "193px",
     height: "48px",
   },
-  authorizeBox: {
-    textAlign: "center",
-    padding: "10px",
-    height: "70%",
-    display: "flex",
-    flex: "auto",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    maxWidth: "75%",
-  },
 });
 
 function AddActivityButton() {
   const config = getConfig();
   const classes = useStyles();
 
-  const queryParams = new URLSearchParams(useLocation().search);
-  const authCode = queryParams.get("code");
-  queryParams.delete("code");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const authCode = searchParams.get("code");
+  if (authCode) {
+    setSearchParams({});
+  }
 
   const { data, status } = useQuery(
     "stravaAuth",
@@ -59,7 +48,7 @@ function AddActivityButton() {
     }
   );
 
-  console.log(data);
+  console.log("data", data);
   const accessToken = data?.access_token;
 
   const {
@@ -85,7 +74,6 @@ function AddActivityButton() {
         currentPage++;
         continuePaging = activityPage.length === 100;
       }
-      console.log(activities);
       return activities;
     },
     { enabled: !!accessToken, refetchOnWindowFocus: false }
@@ -93,22 +81,14 @@ function AddActivityButton() {
 
   if (!accessToken) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Paper elevation={3} className={classes.authorizeBox}>
-          <p>
-            Shows your activities of the last year on a global map
-            visualisation.
-          </p>
-          <a href={config.stravaLink}>
-            <ButtonBase className={classes.donate}></ButtonBase>{" "}
-          </a>
-        </Paper>
-      </Box>
+      <MainPane>
+        <p>
+          Shows your activities of the last year on a global map visualisation.
+        </p>
+        <a href={config.stravaLink}>
+          <ButtonBase className={classes.donate}></ButtonBase>{" "}
+        </a>
+      </MainPane>
     );
   }
 
@@ -119,31 +99,17 @@ function AddActivityButton() {
     status === "idle"
   ) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Paper elevation={3} className={classes.authorizeBox}>
-          <CircularProgress />
-        </Paper>
-      </Box>
+      <MainPane>
+        <CircularProgress />
+      </MainPane>
     );
   }
 
   if (activityStatus === "error" || status === "error") {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Paper elevation={3} className={classes.authorizeBox}>
-          <span>Error: {(error as any).message}</span>
-        </Paper>
-      </Box>
+      <MainPane>
+        <span>Error: {(error as any).message}</span>
+      </MainPane>
     );
   }
 

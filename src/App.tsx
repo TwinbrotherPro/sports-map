@@ -1,5 +1,3 @@
-import "./App.css";
-
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -7,12 +5,13 @@ import {
 } from "@material-ui/core";
 import GithubIcon from "@material-ui/icons/GitHub";
 import InfoIcon from "@material-ui/icons/Info";
+import LoyalityIcon from "@material-ui/icons/Loyalty";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
-import { createBrowserHistory } from "history";
 import { lazy, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Route, Router, Switch } from "react-router";
-
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import "./App.css";
+import { Credits } from "./credits/Credits";
 import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
 
 const queryClient = new QueryClient();
@@ -32,12 +31,17 @@ const useStyles = makeStyles({
   },
 });
 
+const bottomNavigationList = ["/", "/about", "/github", "/credits"];
+
 function App() {
   const classes = useStyles();
 
-  const customHistory = createBrowserHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [navigationValue, setNavigationValue] = useState(0);
+  const [navigationValue, setNavigationValue] = useState(
+    bottomNavigationList.findIndex((element) => element === location.pathname)
+  );
 
   const AddActivityButton = lazy(() => import("./AddActivityButton"));
 
@@ -53,15 +57,17 @@ function App() {
         />
       </div>
       <QueryClientProvider client={queryClient}>
-        <Router history={customHistory}>
-          <Switch>
-            <Route path="/">
+        <Routes>
+          <Route
+            path="/"
+            element={
               <Suspense fallback={<div>Loading ...</div>}>
                 <AddActivityButton />
               </Suspense>
-            </Route>
-          </Switch>
-        </Router>
+            }
+          />
+          <Route path="/credits" element={<Credits />} />
+        </Routes>
         <BottomNavigation
           value={navigationValue}
           className={classes.footer}
@@ -70,7 +76,7 @@ function App() {
             switch (newValue) {
               case 0:
                 setNavigationValue(newValue);
-                customHistory.push("/");
+                navigate("/");
                 break;
               case 1:
                 setNavigationValue(-1);
@@ -82,6 +88,11 @@ function App() {
                   "https://github.com/TwinbrotherPro/sports-map",
                   "_blank"
                 );
+                break;
+              case 3:
+                setNavigationValue(newValue);
+                navigate("/credits");
+                break;
             }
           }}
         >
@@ -91,6 +102,7 @@ function App() {
           />
           <BottomNavigationAction label="About" icon={<InfoIcon />} />
           <BottomNavigationAction label="Code" icon={<GithubIcon />} />
+          <BottomNavigationAction label="Credits" icon={<LoyalityIcon />} />
         </BottomNavigation>
       </QueryClientProvider>
     </div>
