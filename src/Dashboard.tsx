@@ -45,6 +45,7 @@ function ActivityMaker({
   currentActivityIndex,
   setCurrentActivityIndex,
   isMarkersDisabled,
+  isHeatMapEnabled,
 }) {
   const classes = useStyles();
 
@@ -89,11 +90,15 @@ function ActivityMaker({
     <Fragment key={activity.id}>
       <Polyline
         positions={decoding.decode(activity.map.summary_polyline)}
-        pathOptions={
-          currentActivityIndex === activityIndex
-            ? { color: "#CB2B3E" }
-            : { color: "#2A81CB" }
-        }
+        pathOptions={{
+          color: currentActivityIndex === activityIndex ? "#CB2B3E" : "#2A81CB",
+          opacity:
+            !isHeatMapEnabled || currentActivityIndex === activityIndex
+              ? 1.0
+              : 0.4,
+          weight:
+            !isHeatMapEnabled || currentActivityIndex === activityIndex ? 3 : 5,
+        }}
         eventHandlers={onClickHandler}
       />
       {!isMarkersDisabled && (
@@ -145,6 +150,8 @@ function ControlMenu({
   activities,
   isMarkersDisabled,
   setIsMarkersDisabled,
+  isHeatMapEnabled,
+  setIsHeatMapEnabled,
 }) {
   const classes = useStyles();
   const classNames = `leaflet-bottom leaflet-right control ${classes.control}`;
@@ -197,6 +204,16 @@ function ControlMenu({
         >
           {isMarkersDisabled ? "Enable Markers" : "Disable Markers"}
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+          onClick={() => {
+            setIsHeatMapEnabled(!isHeatMapEnabled);
+          }}
+        >
+          {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
+        </Button>
       </div>
     </div>
   );
@@ -206,9 +223,12 @@ function Dashboard({ activities }) {
   const classes = useStyles();
 
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
+  const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
   const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
+
+  console.log(isHeatMapEnabled, "heatmapMode");
 
   const markers = activities.map((activity, index) => (
     <ActivityMaker
@@ -217,6 +237,7 @@ function Dashboard({ activities }) {
       currentActivityIndex={currentActivityIndex}
       setCurrentActivityIndex={setCurrentActivityIndex}
       isMarkersDisabled={isMarkersDisabled}
+      isHeatMapEnabled={isHeatMapEnabled}
     />
   ));
 
@@ -249,6 +270,8 @@ function Dashboard({ activities }) {
           setCurrentActivityIndex={setCurrentActivityIndex}
           isMarkersDisabled={isMarkersDisabled}
           setIsMarkersDisabled={setIsMarkersDisabled}
+          isHeatMapEnabled={isHeatMapEnabled}
+          setIsHeatMapEnabled={setIsHeatMapEnabled}
         />
       </MapContainer>
     </>
