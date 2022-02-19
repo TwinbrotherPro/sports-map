@@ -9,11 +9,10 @@ import GithubIcon from "@material-ui/icons/GitHub";
 import InfoIcon from "@material-ui/icons/Info";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
 import { createBrowserHistory } from "history";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Router, Switch } from "react-router";
 
-import AddActivityButton from "./AddActivityButton";
 import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
 
 const queryClient = new QueryClient();
@@ -40,11 +39,15 @@ function App() {
 
   const [navigationValue, setNavigationValue] = useState(0);
 
+  const AddActivityButton = lazy(() => import("./AddActivityButton"));
+
   return (
     <div className={classes.app}>
       <div className={classes.banner}>
         <img
           src={compatibleWithStrava}
+          width="247px"
+          height="40px"
           style={{ height: "40px", float: "right" }}
           alt="compatibleWithStrava"
         />
@@ -53,7 +56,9 @@ function App() {
         <Router history={customHistory}>
           <Switch>
             <Route path="/">
-              <AddActivityButton />
+              <Suspense fallback={<div>Loading ...</div>}>
+                <AddActivityButton />
+              </Suspense>
             </Route>
           </Switch>
         </Router>

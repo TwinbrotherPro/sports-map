@@ -223,27 +223,35 @@ function Dashboard({ activities }) {
   console.log(activities);
 
   return (
-    <MapContainer
-      bounds={leafletBounds}
-      zoom={13}
-      scrollWheelZoom={true}
-      // Load unprefixed css class
-      className="mapid"
-    >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <>
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossOrigin=""
       />
-      {markers}
-      <ControlMenu
-        activities={activities}
-        outerBounds={outerBounds}
-        currentActivityIndex={currentActivityIndex}
-        setCurrentActivityIndex={setCurrentActivityIndex}
-        isMarkersDisabled={isMarkersDisabled}
-        setIsMarkersDisabled={setIsMarkersDisabled}
-      />
-    </MapContainer>
+      <MapContainer
+        bounds={leafletBounds}
+        zoom={13}
+        scrollWheelZoom={true}
+        // Load unprefixed css class
+        className="mapid"
+      >
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {markers}
+        <ControlMenu
+          activities={activities}
+          outerBounds={outerBounds}
+          currentActivityIndex={currentActivityIndex}
+          setCurrentActivityIndex={setCurrentActivityIndex}
+          isMarkersDisabled={isMarkersDisabled}
+          setIsMarkersDisabled={setIsMarkersDisabled}
+        />
+      </MapContainer>
+    </>
   );
 }
 

@@ -6,7 +6,6 @@ import {
   Paper,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import moment from "moment";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router";
 
@@ -70,7 +69,9 @@ function AddActivityButton() {
   } = useQuery(
     "detailedActivities",
     async () => {
-      const yearBefore = moment().subtract(1, "year").unix();
+      const yearBefore = await import("moment").then((moment) =>
+        moment.default().subtract(1, "year").unix()
+      );
       let currentPage = 1;
       let activities = [];
       let continuePaging = true;
