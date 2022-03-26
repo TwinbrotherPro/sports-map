@@ -3,7 +3,7 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import * as leaflet from "leaflet";
 import moment from "moment";
 import * as decoding from "polyline-encoded";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -49,6 +49,8 @@ function ActivityMaker({
 }) {
   const classes = useStyles();
 
+  const isCurrentActivity = currentActivityIndex === activityIndex;
+  const popupRef = useRef<leaflet.Popup>();
   const map = useMap();
   const onClickHandler = {
     click: (event) => {
@@ -57,6 +59,8 @@ function ActivityMaker({
         duration: 1,
       });
       setCurrentActivityIndex(activityIndex);
+      console.log(popupRef.current);
+      map.openPopup(popupRef.current);
     },
   };
 
@@ -91,13 +95,9 @@ function ActivityMaker({
       <Polyline
         positions={decoding.decode(activity.map.summary_polyline)}
         pathOptions={{
-          color: currentActivityIndex === activityIndex ? "#CB2B3E" : "#2A81CB",
-          opacity:
-            !isHeatMapEnabled || currentActivityIndex === activityIndex
-              ? 1.0
-              : 0.4,
-          weight:
-            !isHeatMapEnabled || currentActivityIndex === activityIndex ? 3 : 5,
+          color: isCurrentActivity ? "#CB2B3E" : "#2A81CB",
+          opacity: !isHeatMapEnabled || isCurrentActivity ? 1.0 : 0.4,
+          weight: !isHeatMapEnabled || isCurrentActivity ? 3 : 5,
         }}
         eventHandlers={onClickHandler}
       />
@@ -105,9 +105,9 @@ function ActivityMaker({
         <Marker
           position={activity.start_latlng}
           eventHandlers={onClickHandler}
-          icon={currentActivityIndex === activityIndex ? redIcon : blueIcon}
+          icon={isCurrentActivity ? redIcon : blueIcon}
         >
-          <Popup>
+          <Popup ref={popupRef}>
             <div>
               <div>
                 <b>{activity.name}</b>
