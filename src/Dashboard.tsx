@@ -52,6 +52,13 @@ const useStyles = makeStyles(() => ({
   favoritesIcon: {
     marginRight: "2px",
   },
+  profile: {
+    margin: "5px",
+    opacity: "0.85",
+    "& img": {
+      borderRadius: "50%",
+    },
+  },
 }));
 
 const typeColors = {
@@ -172,6 +179,15 @@ function ActivityMaker({
   );
 }
 
+function Profile({ athlete }) {
+  const classes = useStyles();
+  return (
+    <div className={"leaflet-top leaflet-right profile " + classes.profile}>
+      <img src={athlete.profile} alt="Profile Image" />
+    </div>
+  );
+}
+
 function ControlMenu({
   outerBounds,
   currentActivityIndex,
@@ -248,7 +264,7 @@ function ControlMenu({
   );
 }
 
-function Dashboard({ activities }) {
+function Dashboard({ activities, athlete }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
@@ -291,6 +307,7 @@ function Dashboard({ activities }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {markers}
+        <Profile athlete={athlete} />
         <ControlMenu
           activities={activities}
           outerBounds={outerBounds}

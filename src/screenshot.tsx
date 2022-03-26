@@ -7,7 +7,7 @@ export function Screenshot() {
   useEffect(() => {
     new SimpleMapScreenshoter({
       screenName: "sportsmap-picture",
-      hideElementsWithSelectors: [".leaflet-control"],
+      hideElementsWithSelectors: [".leaflet-control", ".profile"],
     }).addTo(map);
   }, []);
 

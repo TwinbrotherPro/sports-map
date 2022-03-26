@@ -50,6 +50,7 @@ function AddActivityButton() {
 
   console.log("data", data);
   const accessToken = data?.access_token;
+  const athlete = data?.athlete;
 
   const {
     data: activities,
@@ -116,7 +117,7 @@ function AddActivityButton() {
   if (activities) {
     return (
       <Fade timeout={100000}>
-        <Dashboard activities={activities} />
+        <Dashboard activities={activities} athlete={athlete} />
       </Fade>
     );
   }
