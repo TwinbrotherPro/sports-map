@@ -13,6 +13,7 @@ import {
   TileLayer,
   useMap,
 } from "react-leaflet";
+import { Screenshot } from "./screenshot";
 
 const useStyles = makeStyles(() => ({
   parent: {},
@@ -248,8 +249,6 @@ function ControlMenu({
 }
 
 function Dashboard({ activities }) {
-  const classes = useStyles();
-
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
@@ -286,6 +285,7 @@ function Dashboard({ activities }) {
         // Load unprefixed css class
         className="mapid"
       >
+        <Screenshot />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
