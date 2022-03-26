@@ -1,5 +1,6 @@
 import { Button, makeStyles } from "@material-ui/core";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import * as leaflet from "leaflet";
 import moment from "moment";
 import * as decoding from "polyline-encoded";
@@ -29,6 +30,26 @@ const useStyles = makeStyles(() => ({
       color: "#ca3e02",
       textDecoration: "none",
     },
+  },
+  headline: {
+    display: "flex",
+    flexDirection: "row",
+    color: "#FC4C02",
+    borderBottom: "1px solid #FC4C02",
+  },
+  heading: {
+    marginRight: "5px",
+    fontWeight: "bold",
+  },
+  favorites: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    color: "#FC4C02 ",
+    opacity: "0.7",
+  },
+  favoritesIcon: {
+    marginRight: "2px",
   },
 }));
 
@@ -109,8 +130,15 @@ function ActivityMaker({
         >
           <Popup>
             <div>
-              <div>
-                <b>{activity.name}</b>
+              <div className={classes.headline}>
+                <div className={classes.heading}>{activity.name}</div>
+                <div className={classes.favorites}>
+                  <FavoriteBorder
+                    className={classes.favoritesIcon}
+                    fontSize="inherit"
+                  />
+                  <div>{activity.kudos_count}</div>
+                </div>
               </div>
               <div>
                 {moment(activity.start_date).format("DD.MM.YYYY hh:mm A")}
