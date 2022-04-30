@@ -59,15 +59,15 @@ function AddActivityButton() {
   } = useQuery(
     "detailedActivities",
     async () => {
-      const yearBefore = await import("moment").then((moment) =>
-        moment.default().subtract(1, "year").unix()
+      const tenYearsBefore = await import("moment").then((moment) =>
+        moment.default().subtract(10, "year").unix()
       );
       let currentPage = 1;
       let activities = [];
       let continuePaging = true;
       while (continuePaging) {
         const response = await fetch(
-          `https://www.strava.com/api/v3/athlete/activities?after=${yearBefore}&per_page=100&page=${currentPage}`,
+          `https://www.strava.com/api/v3/athlete/activities?after=${tenYearsBefore}&per_page=100&page=${currentPage}`,
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
         const activityPage = await response.json();

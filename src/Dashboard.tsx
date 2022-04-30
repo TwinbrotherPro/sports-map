@@ -1,19 +1,16 @@
 import { Button, makeStyles } from "@material-ui/core";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import * as leaflet from "leaflet";
-import moment from "moment";
 import * as decoding from "polyline-encoded";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   MapContainer,
   Marker,
   Polyline,
-  Popup,
   TileLayer,
   useMap,
 } from "react-leaflet";
 import { Screenshot } from "./screenshot";
+import { ActivityOverlay } from "./components/ActivityOverlay";
 
 const useStyles = makeStyles(() => ({
   parent: {},
@@ -22,51 +19,14 @@ const useStyles = makeStyles(() => ({
     paddingRight: "50%",
   },
   button: { margin: 5 },
-  stravaBackLink: {
-    "& a:link, a:visited": {
-      color: "#FC4C02",
-      textDecoration: "none",
-    },
-    "& a:hover": {
-      color: "#ca3e02",
-      textDecoration: "none",
-    },
-  },
-  headline: {
-    display: "flex",
-    flexDirection: "row",
-    color: "#FC4C02",
-    borderBottom: "1px solid #FC4C02",
-  },
-  heading: {
-    marginRight: "5px",
-    fontWeight: "bold",
-  },
-  favorites: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    color: "#FC4C02 ",
-    opacity: "0.7",
-  },
-  favoritesIcon: {
-    marginRight: "2px",
-  },
   profile: {
     margin: "5px",
-    opacity: "0.85",
+    opacity: "0.70",
     "& img": {
       borderRadius: "50%",
     },
   },
 }));
-
-const typeColors = {
-  // TODO
-  Hike: "blue",
-  Run: "green",
-  Ride: "red",
-};
 
 function ActivityMaker({
   activity,
@@ -76,8 +36,6 @@ function ActivityMaker({
   isMarkersDisabled,
   isHeatMapEnabled,
 }) {
-  const classes = useStyles();
-
   const map = useMap();
   const onClickHandler = {
     click: (event) => {
@@ -135,45 +93,7 @@ function ActivityMaker({
           position={activity.start_latlng}
           eventHandlers={onClickHandler}
           icon={currentActivityIndex === activityIndex ? redIcon : blueIcon}
-        >
-          <Popup>
-            <div>
-              <div className={classes.headline}>
-                <div className={classes.heading}>{activity.name}</div>
-                <div className={classes.favorites}>
-                  <FavoriteBorder
-                    className={classes.favoritesIcon}
-                    fontSize="inherit"
-                  />
-                  <div>{activity.kudos_count}</div>
-                </div>
-              </div>
-              <div>
-                {moment(activity.start_date).format("DD.MM.YYYY hh:mm A")}
-              </div>
-              <div>
-                {Number.parseFloat(
-                  (activity.distance / 1000).toString()
-                ).toFixed(2)}{" "}
-                km
-              </div>
-              <div>
-                {Number.parseFloat(
-                  (activity.elapsed_time / 60).toString()
-                ).toFixed(1)}{" "}
-                minutes
-              </div>
-              <div className={classes.stravaBackLink}>
-                <a
-                  href={`https://www.strava.com/activities/${activity.id}`}
-                  target="_blank"
-                >
-                  View on Strava
-                </a>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
+        ></Marker>
       )}
     </Fragment>
   );
@@ -190,9 +110,7 @@ function Profile({ athlete }) {
 
 function ControlMenu({
   outerBounds,
-  currentActivityIndex,
   setCurrentActivityIndex,
-  activities,
   isMarkersDisabled,
   setIsMarkersDisabled,
   isHeatMapEnabled,
@@ -207,37 +125,11 @@ function ControlMenu({
     setCurrentActivityIndex(null);
   };
 
-  const onClickNext = () => {
-    let current;
-    if (
-      currentActivityIndex === null ||
-      currentActivityIndex + 1 >= activities.length
-    ) {
-      current = 0;
-    } else {
-      current = currentActivityIndex + 1;
-    }
-    map.flyToBounds(decoding.decode(activities[current].map.summary_polyline), {
-      animate: true,
-      duration: 1,
-    });
-    setCurrentActivityIndex(current);
-  };
-
   return (
     <div className={classNames}>
       <div className="leaflet-control">
         <Button variant="contained" color="secondary" onClick={onClickBack}>
           Zoom out
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          startIcon={<NavigateNextIcon />}
-          onClick={onClickNext}
-        >
-          Next
         </Button>
         <Button
           variant="contained"
@@ -266,17 +158,44 @@ function ControlMenu({
 
 function Dashboard({ activities, athlete }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
+  const [currentActivity, setCurrentActivity] = useState<{
+    id: string;
+    name: string;
+    kudosCount: number;
+    startDate: Date;
+    distance: number;
+    elapsedTime: number;
+  } | null>(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
   const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
 
+  useEffect(() => {
+    const activity = activities.find(
+      (activity) => activity.id === currentActivityIndex
+    );
+    console.log("test", activity);
+    if (activity) {
+      setCurrentActivity({
+        distance: activity.distance,
+        elapsedTime: activity.elapsed_time,
+        id: activity.id,
+        kudosCount: activity.kudos_count,
+        name: activity.name,
+        startDate: activity.start_date,
+      });
+    } else {
+      setCurrentActivity(null);
+    }
+  }, [currentActivityIndex]);
+
   console.log(isHeatMapEnabled, "heatmapMode");
 
-  const markers = activities.map((activity, index) => (
+  const markers = activities.map((activity) => (
     <ActivityMaker
       activity={activity}
-      activityIndex={index}
+      activityIndex={activity.id}
       currentActivityIndex={currentActivityIndex}
       setCurrentActivityIndex={setCurrentActivityIndex}
       isMarkersDisabled={isMarkersDisabled}
@@ -288,6 +207,10 @@ function Dashboard({ activities, athlete }) {
 
   return (
     <>
+      <ActivityOverlay
+        activity={currentActivity}
+        setCurrentActivityIndex={setCurrentActivityIndex}
+      />
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -309,9 +232,7 @@ function Dashboard({ activities, athlete }) {
         {markers}
         <Profile athlete={athlete} />
         <ControlMenu
-          activities={activities}
           outerBounds={outerBounds}
-          currentActivityIndex={currentActivityIndex}
           setCurrentActivityIndex={setCurrentActivityIndex}
           isMarkersDisabled={isMarkersDisabled}
           setIsMarkersDisabled={setIsMarkersDisabled}
