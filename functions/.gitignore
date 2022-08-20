@@ -13,3 +13,6 @@ node_modules/
 
 # Credentials
 src/credentials.ts
+
+# Firebase
+firebase-debug.log
