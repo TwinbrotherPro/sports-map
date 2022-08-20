@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { Credits } from "./credits/Credits";
-import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg";
+import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg"; // FIX tsc error?
 
 const queryClient = new QueryClient();
 
