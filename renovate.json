@@ -1,0 +1,11 @@
+{
+  "extends": ["config:base"],
+  "commitMessagePrefix": "{{{prettyDepType}}}",
+  "commitMessageExtra": "from v{{{currentVersion}}} to {{#if isMajor}}v{{{newMajor}}}{{else}}{{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}",
+  "packageRules": [
+    {
+      "matchPackageNames": ["node", "@types/node"],
+      "allowedVersions": "/^16\\..*/"
+    }
+  ]
+}
