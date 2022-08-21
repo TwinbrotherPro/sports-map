@@ -39,6 +39,7 @@ function ActivityMaker({
   const map = useMap();
   const onClickHandler = {
     click: (event) => {
+      console.log(decoding.decode(activity.map.summary_polyline));
       map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
         animate: true,
         duration: 1,
@@ -207,10 +208,12 @@ function Dashboard({ activities, athlete }) {
 
   return (
     <>
-      <ActivityOverlay
-        activity={currentActivity}
-        setCurrentActivityIndex={setCurrentActivityIndex}
-      />
+      {currentActivity && (
+        <ActivityOverlay
+          activity={currentActivity}
+          setCurrentActivityIndex={setCurrentActivityIndex}
+        />
+      )}
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"

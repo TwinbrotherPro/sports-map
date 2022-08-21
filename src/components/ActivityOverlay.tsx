@@ -2,6 +2,8 @@ import { IconButton, makeStyles } from "@material-ui/core";
 import { FavoriteBorder } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import moment from "moment";
+import { useAuthAthlete } from "../hooks/useAuthAthlete";
+import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 
 const useStyles = makeStyles(() => ({
   overlay: {
@@ -85,9 +87,11 @@ export function ActivityOverlay({
 }) {
   const classes = useStyles();
 
-  if (!activity) {
-    return null;
-  }
+  const { accessToken, status } = useAuthAthlete();
+  const { detailedActivity, activityStatus, error } = useGetDetailedActivity(
+    activity.id,
+    accessToken
+  );
 
   return (
     <div className={classes.overlay}>
@@ -119,6 +123,7 @@ export function ActivityOverlay({
           {Number.parseFloat((activity.elapsedTime / 60).toString()).toFixed(1)}{" "}
           minutes
         </div>
+        {detailedActivity && <div>{detailedActivity.description}</div>}
         <div className={classes.stravaBackLink}>
           <a
             href={`https://www.strava.com/activities/${activity.id}`}

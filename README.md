@@ -1,6 +1,6 @@
 # Sports Map
 
-This project is a visualisation of a users Strava activities. A deployed version can be found under https://strava-dashboard-368b0.web.app/.
+This project is a visualisation of a users Strava activities. A deployed version can be found under https://sportsmap.philippkraus.me.
 
 Technologies used:
 

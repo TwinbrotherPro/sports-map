@@ -9,6 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import { MainPane } from "./components/MainPane";
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
+import { useAuthAthlete } from "./hooks/useAuthAthlete";
 import connectButton from "./misc/btn_strava_connectwith_orange.svg";
 
 const useStyles = makeStyles({
@@ -25,39 +26,14 @@ function AddActivityButton() {
   const config = getConfig();
   const classes = useStyles();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const authCode = searchParams.get("code");
-  if (authCode) {
-    setSearchParams({});
-  }
-
-  const { data, status } = useQuery(
-    "stravaAuth",
-    async () => {
-      const response = await fetch(getConfig().stravaAuth(authCode), {
-        method: "POST",
-      });
-      return response.json();
-    },
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
-      enabled: !!authCode,
-    }
-  );
-
-  console.log("data", data);
-  const accessToken = data?.access_token;
-  const athlete = data?.athlete;
+  const { accessToken, athlete, status } = useAuthAthlete();
 
   const {
     data: activities,
     status: activityStatus,
     error,
   } = useQuery(
-    "detailedActivities",
+    "activityList",
     async () => {
       const tenYearsBefore = await import("moment").then((moment) =>
         moment.default().subtract(10, "year").unix()
