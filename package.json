@@ -10,7 +10,7 @@
     "@testing-library/user-event": "14.4.3",
     "@types/jest": "28.1.7",
     "@types/node": "16.11.51",
-    "@types/react": "18.0.17",
+    "@types/react": "18.0.25",
     "@types/react-dom": "18.0.6",
     "@types/react-leaflet": "2.8.2",
     "leaflet": "1.8.0",
