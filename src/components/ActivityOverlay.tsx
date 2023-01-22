@@ -1,7 +1,8 @@
-import { Grid, IconButton, makeStyles } from "@material-ui/core";
+import { Fade, Grid, IconButton, makeStyles, Modal } from "@material-ui/core";
 import { FavoriteBorder } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import moment from "moment";
+import { useState } from "react";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 
@@ -13,7 +14,7 @@ const useStyles = makeStyles(() => ({
     minWidth: "350px",
     backgroundColor: "white",
     right: "0px",
-    zIndex: 10000,
+    zIndex: 1001,
     boxShadow: "-5px 7px 10px 0px grey",
     boxSizing: "border-box",
     padding: "10px 5px",
@@ -26,13 +27,6 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
   },
-  /*   main: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-  }, */
   closeIcon: {
     position: "absolute",
     pading: "5px",
@@ -103,6 +97,14 @@ const useStyles = makeStyles(() => ({
     width: "50%",
     margin: "auto",
   },
+  modalImg: {
+    margin: "auto",
+    left: "0",
+    right: "0",
+    top: "0",
+    bottom: "0",
+    position: "absolute",
+  },
 }));
 
 export function ActivityOverlay({
@@ -126,6 +128,10 @@ export function ActivityOverlay({
     activity.id,
     accessToken
   );
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const handleClose = () => setModalIsOpen(false);
+  const handleClick = () => setModalIsOpen(!modalIsOpen); // TODO Find better way to handle open and close
 
   return (
     <div className={classes.overlay}>
@@ -171,7 +177,21 @@ export function ActivityOverlay({
               backgroundImage:
                 "url(" + detailedActivity.photos.primary.urls["600"] + ")",
             }}
-          ></div>
+            onClick={handleClick}
+          >
+            <Modal
+              open={modalIsOpen}
+              onClose={handleClose}
+              closeAfterTransition
+            >
+              <Fade in={modalIsOpen}>
+                <img
+                  src={detailedActivity.photos.primary.urls["600"]}
+                  className={classes.modalImg}
+                />
+              </Fade>
+            </Modal>
+          </div>
         )}
       </div>
       <div className={classes.stravaBackLink}>
