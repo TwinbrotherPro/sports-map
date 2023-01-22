@@ -39,7 +39,6 @@ function ActivityMaker({
   const map = useMap();
   const onClickHandler = {
     click: (event) => {
-      console.log(decoding.decode(activity.map.summary_polyline));
       map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
         animate: true,
         duration: 1,

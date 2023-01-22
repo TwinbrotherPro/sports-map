@@ -1,4 +1,4 @@
-import { IconButton, makeStyles } from "@material-ui/core";
+import { Grid, IconButton, makeStyles } from "@material-ui/core";
 import { FavoriteBorder } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import moment from "moment";
@@ -16,24 +16,26 @@ const useStyles = makeStyles(() => ({
     zIndex: 10000,
     boxShadow: "-5px 7px 10px 0px grey",
     boxSizing: "border-box",
-    padding: "5px",
+    padding: "10px 5px",
     bottom: "0px",
+    marginBottom: "10px",
     ["@media (min-width:700px)"]: {
       width: "350px",
       height: "100%",
     },
+    display: "flex",
+    flexDirection: "column",
   },
-  main: {
+  /*   main: {
     display: "flex",
     flexDirection: "column",
     width: "100%",
     height: "100%",
     alignItems: "center",
-    marginTop: "20px",
-  },
+  }, */
   closeIcon: {
     position: "absolute",
-    margin: "15px",
+    pading: "5px",
     float: "left",
   },
   headline: {
@@ -68,6 +70,38 @@ const useStyles = makeStyles(() => ({
       color: "#ca3e02",
       textDecoration: "none",
     },
+    marginTop: "15px",
+  },
+  primaryImage: {
+    width: "50%",
+    ["@media (min-width:700px)"]: {
+      width: "330px",
+      maxHeight: "330px",
+      marginTop: "5px",
+      height: "100%",
+    },
+    maxWidth: "100%",
+    objectFit: "cover",
+    overflow: "hidden",
+    borderRadius: "10px",
+    boxShadow: "0px 0px 5px #333333",
+  },
+  details: {
+    ["@media (min-width:700px)"]: {
+      flexDirection: "column",
+    },
+    textAlign: "center",
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
+    flex: "1",
+  },
+  stats: {
+    ["@media (min-width:700px)"]: {
+      width: "100%",
+    },
+    width: "50%",
+    margin: "auto",
   },
 }));
 
@@ -103,35 +137,50 @@ export function ActivityOverlay({
       >
         <CloseIcon />
       </IconButton>
-      <div className={classes.main}>
-        <div className={classes.headline}>
-          <div className={classes.heading}>{activity.name}</div>
-          <div className={classes.favorites}>
-            <FavoriteBorder
-              className={classes.favoritesIcon}
-              fontSize="inherit"
-            />
-            <div>{activity.kudosCount}</div>
+      <div className={classes.headline}>
+        <div className={classes.heading}>{activity.name}</div>
+        <div className={classes.favorites}>
+          <FavoriteBorder
+            className={classes.favoritesIcon}
+            fontSize="inherit"
+          />
+          <div>{activity.kudosCount}</div>
+        </div>
+      </div>
+      <div className={classes.details}>
+        <div className={classes.stats}>
+          <div>{moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}</div>
+          <div>
+            {Number.parseFloat((activity.distance / 1000).toString()).toFixed(
+              2
+            )}{" "}
+            km
           </div>
+          <div>
+            {Number.parseFloat((activity.elapsedTime / 60).toString()).toFixed(
+              1
+            )}{" "}
+            minutes
+          </div>
+          {detailedActivity && <div>{detailedActivity.description}</div>}
         </div>
-        <div>{moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}</div>
-        <div>
-          {Number.parseFloat((activity.distance / 1000).toString()).toFixed(2)}{" "}
-          km
-        </div>
-        <div>
-          {Number.parseFloat((activity.elapsedTime / 60).toString()).toFixed(1)}{" "}
-          minutes
-        </div>
-        {detailedActivity && <div>{detailedActivity.description}</div>}
-        <div className={classes.stravaBackLink}>
-          <a
-            href={`https://www.strava.com/activities/${activity.id}`}
-            target="_blank"
-          >
-            View on Strava
-          </a>
-        </div>
+        {detailedActivity && detailedActivity.photos.count > 0 && (
+          <div
+            className={classes.primaryImage}
+            style={{
+              backgroundImage:
+                "url(" + detailedActivity.photos.primary.urls["600"] + ")",
+            }}
+          ></div>
+        )}
+      </div>
+      <div className={classes.stravaBackLink}>
+        <a
+          href={`https://www.strava.com/activities/${activity.id}`}
+          target="_blank"
+        >
+          View on Strava
+        </a>
       </div>
     </div>
   );

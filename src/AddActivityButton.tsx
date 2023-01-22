@@ -5,7 +5,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
 import { MainPane } from "./components/MainPane";
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
