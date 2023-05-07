@@ -181,6 +181,7 @@ function Dashboard({ activities, athlete }) {
     startDate: Date;
     distance: number;
     elapsedTime: number;
+    type: string;
   } | null>(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
@@ -200,6 +201,7 @@ function Dashboard({ activities, athlete }) {
         kudosCount: activity.kudos_count,
         name: activity.name,
         startDate: activity.start_date,
+        type: activity.type,
       });
     } else {
       setCurrentActivity(null);

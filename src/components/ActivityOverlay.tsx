@@ -145,6 +145,7 @@ export function ActivityOverlay({
     startDate: Date;
     distance: number;
     elapsedTime: number;
+    type: string;
   };
   setCurrentActivityIndex;
 }) {
@@ -165,7 +166,8 @@ export function ActivityOverlay({
         onClick={() => {
           setCurrentActivityIndex(null);
         }}
-        size="large">
+        size="large"
+      >
         <CloseIcon />
       </IconButton>
       <div className={classes.headline}>
@@ -180,7 +182,10 @@ export function ActivityOverlay({
       </div>
       <div className={classes.details}>
         <div className={classes.stats}>
-          <div>{moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}</div>
+          <div>Type: {activity.type}</div>
+          <div>
+            Start: {moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}
+          </div>
           <div>
             {Number.parseFloat((activity.distance / 1000).toString()).toFixed(
               2
@@ -193,6 +198,11 @@ export function ActivityOverlay({
             )}{" "}
             minutes
           </div>
+          {detailedActivity && (
+            <div>
+              Total elevation: {detailedActivity.total_elevation_gain} m
+            </div>
+          )}
           {detailedActivity && <div>{detailedActivity.description}</div>}
         </div>
         {detailedActivity && detailedActivity.photos.count > 0 && (
