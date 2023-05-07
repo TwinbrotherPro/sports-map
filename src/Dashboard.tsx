@@ -1,4 +1,5 @@
-import { Button, makeStyles } from "@material-ui/core";
+import { Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import * as leaflet from "leaflet";
 import * as decoding from "polyline-encoded";
 import { Fragment, useEffect, useState } from "react";
@@ -12,14 +13,31 @@ import {
 import { Screenshot } from "./screenshot";
 import { ActivityOverlay } from "./components/ActivityOverlay";
 
-const useStyles = makeStyles(() => ({
-  parent: {},
-  marker: { color: "green", textAlign: "left" }, // In use?
-  control: {
+const PREFIX = "Dashboard";
+
+const classes = {
+  parent: `${PREFIX}-parent`,
+  marker: `${PREFIX}-marker`,
+  control: `${PREFIX}-control`,
+  button: `${PREFIX}-button`,
+  profile: `${PREFIX}-profile`,
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled("div")(() => ({
+  height: "100%",
+  [`& .${classes.parent}`]: {},
+
+  // In use?
+  [`& .${classes.marker}`]: { color: "green", textAlign: "left" },
+
+  [`& .${classes.control}`]: {
     paddingRight: "50%",
   },
-  button: { margin: 5 },
-  profile: {
+
+  [`& .${classes.button}`]: { margin: 5 },
+
+  [`& .${classes.profile}`]: {
     margin: "5px",
     opacity: "0.70",
     "& img": {
@@ -100,7 +118,6 @@ function ActivityMaker({
 }
 
 function Profile({ athlete }) {
-  const classes = useStyles();
   return (
     <div className={"leaflet-top leaflet-right profile " + classes.profile}>
       <img src={athlete.profile} alt="Profile Image" />
@@ -116,7 +133,6 @@ function ControlMenu({
   isHeatMapEnabled,
   setIsHeatMapEnabled,
 }) {
-  const classes = useStyles();
   const classNames = `leaflet-bottom leaflet-right control ${classes.control}`;
   const map = useMap();
 
@@ -206,7 +222,7 @@ function Dashboard({ activities, athlete }) {
   console.log(activities);
 
   return (
-    <>
+    <Root>
       {currentActivity && (
         <ActivityOverlay
           activity={currentActivity}
@@ -242,7 +258,7 @@ function Dashboard({ activities, athlete }) {
           setIsHeatMapEnabled={setIsHeatMapEnabled}
         />
       </MapContainer>
-    </>
+    </Root>
   );
 }
 

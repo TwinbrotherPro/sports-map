@@ -1,21 +1,22 @@
-import {
-  ButtonBase,
-  CircularProgress,
-  Fade,
-  makeStyles,
-} from "@material-ui/core";
+import { CircularProgress, Fade } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { useQuery } from "react-query";
 import { MainPane } from "./components/MainPane";
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
 import { useAuthAthlete } from "./hooks/useAuthAthlete";
-import connectButton from "./misc/btn_strava_connectwith_orange.svg";
+import { ReactComponent as ConnectButton } from "./misc/btn_strava_connectwith_orange.svg";
 
-const useStyles = makeStyles({
-  donate: {
+const PREFIX = "AddActivityButton";
+
+const classes = {
+  donate: `${PREFIX}-donate`,
+};
+
+const StyledFade = styled(Fade)({
+  [`& .${classes.donate}`]: {
     marginLeft: " auto",
     marginRight: " auto",
-    backgroundImage: `url(${connectButton})`,
     width: "193px",
     height: "48px",
   },
@@ -23,7 +24,6 @@ const useStyles = makeStyles({
 
 function AddActivityButton() {
   const config = getConfig();
-  const classes = useStyles();
 
   const { accessToken, athlete, status } = useAuthAthlete();
 
@@ -62,7 +62,7 @@ function AddActivityButton() {
           Shows your activities of the last year on a global map visualisation.
         </p>
         <a href={config.stravaLink}>
-          <ButtonBase className={classes.donate}></ButtonBase>{" "}
+          <ConnectButton className={classes.donate}>Donate</ConnectButton>
         </a>
       </MainPane>
     );
@@ -91,9 +91,9 @@ function AddActivityButton() {
 
   if (activities) {
     return (
-      <Fade timeout={100000}>
+      <StyledFade timeout={100000}>
         <Dashboard activities={activities} athlete={athlete} />
-      </Fade>
+      </StyledFade>
     );
   }
 

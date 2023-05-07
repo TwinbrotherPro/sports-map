@@ -1,13 +1,30 @@
-import { Fade, Grid, IconButton, makeStyles, Modal } from "@material-ui/core";
-import { FavoriteBorder } from "@material-ui/icons";
-import CloseIcon from "@material-ui/icons/Close";
+import { Fade, IconButton, Modal } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { FavoriteBorder } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import { useState } from "react";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 
-const useStyles = makeStyles(() => ({
-  overlay: {
+const PREFIX = "ActivityOverlay";
+
+const classes = {
+  overlay: `${PREFIX}-overlay`,
+  closeIcon: `${PREFIX}-closeIcon`,
+  headline: `${PREFIX}-headline`,
+  heading: `${PREFIX}-heading`,
+  favorites: `${PREFIX}-favorites`,
+  favoritesIcon: `${PREFIX}-favoritesIcon`,
+  stravaBackLink: `${PREFIX}-stravaBackLink`,
+  primaryImage: `${PREFIX}-primaryImage`,
+  details: `${PREFIX}-details`,
+  stats: `${PREFIX}-stats`,
+  modalImg: `${PREFIX}-modalImg`,
+};
+
+const Root = styled("div")(() => ({
+  [`&.${classes.overlay}`]: {
     position: "absolute",
     height: "35%",
     width: "100%",
@@ -27,12 +44,14 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
   },
-  closeIcon: {
+
+  [`& .${classes.closeIcon}`]: {
     position: "absolute",
     pading: "5px",
     float: "left",
   },
-  headline: {
+
+  [`& .${classes.headline}`]: {
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -42,20 +61,24 @@ const useStyles = makeStyles(() => ({
     paddingBottom: "8px",
     justifyContent: "center",
   },
-  heading: {
+
+  [`& .${classes.heading}`]: {
     marginRight: "5px",
   },
-  favorites: {
+
+  [`& .${classes.favorites}`]: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     color: "#FC4C02 ",
     opacity: "0.7",
   },
-  favoritesIcon: {
+
+  [`& .${classes.favoritesIcon}`]: {
     marginRight: "2px",
   },
-  stravaBackLink: {
+
+  [`& .${classes.stravaBackLink}`]: {
     "& a:link, a:visited": {
       color: "#FC4C02",
       textDecoration: "none",
@@ -66,7 +89,8 @@ const useStyles = makeStyles(() => ({
     },
     marginTop: "15px",
   },
-  primaryImage: {
+
+  [`& .${classes.primaryImage}`]: {
     width: "50%",
     ["@media (min-width:700px)"]: {
       width: "330px",
@@ -80,7 +104,8 @@ const useStyles = makeStyles(() => ({
     borderRadius: "10px",
     boxShadow: "0px 0px 5px #333333",
   },
-  details: {
+
+  [`& .${classes.details}`]: {
     ["@media (min-width:700px)"]: {
       flexDirection: "column",
     },
@@ -90,22 +115,24 @@ const useStyles = makeStyles(() => ({
     flexDirection: "row",
     flex: "1",
   },
-  stats: {
+
+  [`& .${classes.stats}`]: {
     ["@media (min-width:700px)"]: {
       width: "100%",
     },
     width: "50%",
     margin: "auto",
   },
-  modalImg: {
-    margin: "auto",
-    left: "0",
-    right: "0",
-    top: "0",
-    bottom: "0",
-    position: "absolute",
-  },
 }));
+
+const ModalImg = styled("img")({
+  margin: "auto",
+  left: "0",
+  right: "0",
+  top: "0",
+  bottom: "0",
+  position: "absolute",
+});
 
 export function ActivityOverlay({
   activity,
@@ -121,8 +148,6 @@ export function ActivityOverlay({
   };
   setCurrentActivityIndex;
 }) {
-  const classes = useStyles();
-
   const { accessToken, status } = useAuthAthlete();
   const { detailedActivity, activityStatus, error } = useGetDetailedActivity(
     activity.id,
@@ -134,7 +159,7 @@ export function ActivityOverlay({
   const handleClick = () => setModalIsOpen(!modalIsOpen); // TODO Find better way to handle open and close
 
   return (
-    <div className={classes.overlay}>
+    <Root className={classes.overlay}>
       <IconButton
         className={classes.closeIcon}
         onClick={() => {
@@ -185,7 +210,7 @@ export function ActivityOverlay({
               closeAfterTransition
             >
               <Fade in={modalIsOpen}>
-                <img
+                <ModalImg
                   src={detailedActivity.photos.primary.urls["600"]}
                   className={classes.modalImg}
                 />
@@ -202,6 +227,6 @@ export function ActivityOverlay({
           View on Strava
         </a>
       </div>
-    </div>
+    </Root>
   );
 }

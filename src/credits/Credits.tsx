@@ -4,18 +4,18 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { MainPane } from "../components/MainPane";
 import favIcon from "../misc/favicon.png";
 
-const useStyles = makeStyles({});
+const PREFIX = "Credits";
+const classes = {};
+const StyledMainPane = styled(MainPane)({});
 
 export function Credits() {
-  const classes = useStyles();
-
   return (
-    <MainPane>
+    <StyledMainPane>
       <List>
         <ListItem>
           <ListItemIcon>
@@ -35,6 +35,6 @@ export function Credits() {
           </ListItemText>
         </ListItem>
       </List>
-    </MainPane>
+    </StyledMainPane>
   );
 }

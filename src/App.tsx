@@ -1,12 +1,9 @@
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  makeStyles,
-} from "@material-ui/core";
-import GithubIcon from "@material-ui/icons/GitHub";
-import InfoIcon from "@material-ui/icons/Info";
-import LoyalityIcon from "@material-ui/icons/Loyalty";
-import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
+import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { createTheme, styled } from "@mui/material/styles";
+import GithubIcon from "@mui/icons-material/GitHub";
+import InfoIcon from "@mui/icons-material/Info";
+import LoyalityIcon from "@mui/icons-material/Loyalty";
+import SettingsBackupRestoreIcon from "@mui/icons-material/SettingsBackupRestore";
 import { lazy, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
@@ -14,28 +11,36 @@ import "./App.css";
 import { Credits } from "./credits/Credits";
 import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg"; // FIX tsc error?
 
-const queryClient = new QueryClient();
+const PREFIX = "App";
 
-const useStyles = makeStyles({
-  app: {
+const classes = {
+  app: `${PREFIX}-app`,
+  footer: `${PREFIX}-footer`,
+  banner: `${PREFIX}-banner`,
+};
+
+const Root = styled("div")({
+  [`&.${classes.app}`]: {
     height: "100%",
     boxShadow: "3",
     backgroundColor: "#f0f0f0",
     display: "flex",
     flexDirection: "column",
   },
-  footer: {},
-  banner: {
+  [`& .${classes.footer}`]: {},
+  [`& .${classes.banner}`]: {
     alignItems: "right",
     backgroundColor: "white",
   },
 });
 
+const queryClient = new QueryClient();
+
+const theme = createTheme();
+
 const bottomNavigationList = ["/", "/about", "/github", "/credits"];
 
 function App() {
-  const classes = useStyles();
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,7 +51,8 @@ function App() {
   const AddActivityButton = lazy(() => import("./AddActivityButton"));
 
   return (
-    <div className={classes.app}>
+    //<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    <Root className={classes.app}>
       <div className={classes.banner}>
         <img
           src={compatibleWithStrava}
@@ -105,8 +111,7 @@ function App() {
           <BottomNavigationAction label="Credits" icon={<LoyalityIcon />} />
         </BottomNavigation>
       </QueryClientProvider>
-    </div>
-    //<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    </Root>
   );
 }
 

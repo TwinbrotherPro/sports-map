@@ -1,9 +1,19 @@
-import { Box, makeStyles, Paper } from "@material-ui/core";
+import { Box, Paper, styled } from "@mui/material";
 import { Suspense, PropsWithChildren } from "react";
 
-export function MainPane({ children }: PropsWithChildren<{}>) {
-  const classes = useStyles();
+const AuthorizeBox = styled(Paper)({
+  textAlign: "center",
+  padding: "10px",
+  height: "70%",
+  display: "flex",
+  flex: "auto",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  maxWidth: "75%",
+});
 
+export function MainPane({ children }: PropsWithChildren<{}>) {
   return (
     <Suspense fallback={<div>Loading ...</div>}>
       <Box
@@ -12,24 +22,8 @@ export function MainPane({ children }: PropsWithChildren<{}>) {
         alignItems="center"
         height="100%"
       >
-        <Paper elevation={3} className={classes.authorizeBox}>
-          {children}
-        </Paper>
+        <AuthorizeBox elevation={3}>{children}</AuthorizeBox>
       </Box>
     </Suspense>
   );
 }
-
-const useStyles = makeStyles({
-  authorizeBox: {
-    textAlign: "center",
-    padding: "10px",
-    height: "70%",
-    display: "flex",
-    flex: "auto",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    maxWidth: "75%",
-  },
-});
