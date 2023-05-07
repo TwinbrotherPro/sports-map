@@ -165,7 +165,7 @@ export function ActivityOverlay({
         onClick={() => {
           setCurrentActivityIndex(null);
         }}
-      >
+        size="large">
         <CloseIcon />
       </IconButton>
       <div className={classes.headline}>
