@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { alpha, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import * as leaflet from "leaflet";
 import * as decoding from "polyline-encoded";
@@ -31,12 +31,6 @@ const Root = styled("div")(() => ({
   // In use?
   [`& .${classes.marker}`]: { color: "green", textAlign: "left" },
 
-  [`& .${classes.control}`]: {
-    paddingRight: "50%",
-  },
-
-  [`& .${classes.button}`]: { margin: 5 },
-
   [`& .${classes.profile}`]: {
     margin: "5px",
     opacity: "0.70",
@@ -44,6 +38,16 @@ const Root = styled("div")(() => ({
       borderRadius: "50%",
     },
   },
+}));
+
+const Control = styled("div")(({ theme }) => ({
+  paddingRight: "50%",
+  backgroundColor: alpha(theme.palette.info.light, 0.5),
+}));
+
+const ControlButton = styled(Button)(({ theme }) => ({
+  margin: 5,
+  backgroundColor: theme.palette.primary.dark,
 }));
 
 function ActivityMaker({
@@ -133,7 +137,7 @@ function ControlMenu({
   isHeatMapEnabled,
   setIsHeatMapEnabled,
 }) {
-  const classNames = `leaflet-bottom leaflet-right control ${classes.control}`;
+  const classNames = `leaflet-bottom leaflet-control`;
   const map = useMap();
 
   const onClickBack = () => {
@@ -142,33 +146,32 @@ function ControlMenu({
   };
 
   return (
-    <div className={classNames}>
-      <div className="leaflet-control">
-        <Button variant="contained" color="secondary" onClick={onClickBack}>
-          Zoom out
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          onClick={() => {
-            setIsMarkersDisabled(!isMarkersDisabled);
-          }}
-        >
-          {isMarkersDisabled ? "Enable Markers" : "Disable Markers"}
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          onClick={() => {
-            setIsHeatMapEnabled(!isHeatMapEnabled);
-          }}
-        >
-          {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
-        </Button>
-      </div>
-    </div>
+    <Control className={classNames}>
+      <ControlButton variant="contained" onClick={onClickBack} size="small">
+        Zoom out
+      </ControlButton>
+      <ControlButton
+        variant="contained"
+        size="small"
+        onClick={() => {
+          setIsMarkersDisabled(!isMarkersDisabled);
+        }}
+      >
+        {isMarkersDisabled ? "Enable Markers" : "Disable Markers"}
+      </ControlButton>
+      <ControlButton
+        size="small"
+        variant="contained"
+        onClick={() => {
+          setIsHeatMapEnabled(!isHeatMapEnabled);
+        }}
+      >
+        {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
+      </ControlButton>
+      <ControlButton size="small" variant="contained">
+        Save Data
+      </ControlButton>
+    </Control>
   );
 }
 
