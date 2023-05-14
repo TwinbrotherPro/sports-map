@@ -5,8 +5,11 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { devSecret, prodSecret } from "./credentials";
 import axios, { AxiosRequestConfig } from "axios";
 import { ATHLETE_PATH, STRAVA_BASE_PATH } from "./config";
+import { getFirestore } from "firebase-admin/firestore";
+import { v4 } from "uuid";
 
 admin.initializeApp();
+const db = getFirestore();
 
 const app = express();
 const stravaAuthProxy = (secret: string) =>
@@ -32,13 +35,61 @@ exports.tokenExchange = functions.https.onRequest(async (req, res) => {
 
   const response = await axios.get(`/${ATHLETE_PATH}`, config);
 
+  const usefulData = {
+    stravaId: response.data.id,
+    name: `${response.data.firstname} ${response.data.lastname}`,
+    photoUrl: response.data.profile || "",
+  };
+
   console.log(response.status, response.data);
 
-  // Create user if not yet exists
+  // Check if user exists
+  const usersRef = db.collection("users");
+  const snapshot = await usersRef
+    .where("stravaId", "==", usefulData.stravaId)
+    .get();
+  let httpStatus;
+  let uuid;
+  if (snapshot.empty) {
+    uuid = await createUser(
+      usefulData.stravaId,
+      "blinddog@hotmail.de",
+      usefulData.photoUrl,
+      usefulData.name
+    );
+    httpStatus = 201;
+  } else {
+    uuid = snapshot.docs[0].id;
+    httpStatus = 200;
+  }
+
+  const customToken = await admin.auth().createCustomToken(uuid);
+  res.status(httpStatus).json({ customToken }).send();
+});
+
+async function createUser(
+  stravaId: string,
+  email: string,
+  photoUrl: string,
+  name: string
+) {
+  const uuid = v4();
+
+  // Create user in auth
   await admin.auth().createUser({
     email: "blinddog@hotmail.de",
-    photoURL: response.data.profile,
+    photoURL: photoUrl,
+    uid: uuid,
   });
 
-  res.status(200).send();
-});
+  // Create user in db
+  const userRef = db.collection("users").doc(uuid);
+  await userRef.set({
+    email,
+    photoURL: photoUrl,
+    stravaId,
+    name,
+  });
+
+  return uuid;
+}
