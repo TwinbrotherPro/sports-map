@@ -8,7 +8,7 @@
     "@mui/icons-material": "5.11.16",
     "@mui/material": "5.13.0",
     "firebase": "^9.22.0",
-    "leaflet": "1.9.3",
+    "leaflet": "1.9.4",
     "leaflet-simple-map-screenshoter": "0.5.0",
     "moment": "2.29.4",
     "polyline-encoded": "0.0.9",
