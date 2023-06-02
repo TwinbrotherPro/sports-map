@@ -33,38 +33,50 @@ exports.tokenExchange = functions.https.onRequest(async (req, res) => {
     method: "get",
   };
 
-  const response = await axios.get(`/${ATHLETE_PATH}`, config);
+  try {
+    const response = await axios.get(`/${ATHLETE_PATH}`, config);
 
-  const usefulData = {
-    stravaId: response.data.id,
-    name: `${response.data.firstname} ${response.data.lastname}`,
-    photoUrl: response.data.profile || "",
-  };
+    const usefulData = {
+      stravaId: response.data.id,
+      name: `${response.data.firstname} ${response.data.lastname}`,
+      photoUrl: response.data.profile || "",
+    };
 
-  console.log(response.status, response.data);
+    console.log(response.status, response.data); // TODO remove once not needed anymore
 
-  // Check if user exists
-  const usersRef = db.collection("users");
-  const snapshot = await usersRef
-    .where("stravaId", "==", usefulData.stravaId)
-    .get();
-  let httpStatus;
-  let uuid;
-  if (snapshot.empty) {
-    uuid = await createUser(
-      usefulData.stravaId,
-      "blinddog@hotmail.de",
-      usefulData.photoUrl,
-      usefulData.name
-    );
-    httpStatus = 201;
-  } else {
-    uuid = snapshot.docs[0].id;
-    httpStatus = 200;
+    // Check if user exists
+    const usersRef = db.collection("users");
+    const snapshot = await usersRef
+      .where("stravaId", "==", usefulData.stravaId)
+      .get();
+    let httpStatus;
+    let uuid;
+    if (snapshot.empty) {
+      uuid = await createUser(
+        usefulData.stravaId,
+        "blinddog@hotmail.de",
+        usefulData.photoUrl,
+        usefulData.name
+      );
+      httpStatus = 201;
+    } else {
+      uuid = snapshot.docs[0].id;
+      httpStatus = 200;
+    }
+
+    const customToken = await admin.auth().createCustomToken(uuid);
+    res.status(httpStatus).json({ customToken }).send();
+  } catch (error: any) {
+    if (
+      axios.isAxiosError(error) &&
+      error.response &&
+      error.response.status === 401
+    ) {
+      res.status(401).send();
+    } else {
+      res.status(500).send();
+    }
   }
-
-  const customToken = await admin.auth().createCustomToken(uuid);
-  res.status(httpStatus).json({ customToken }).send();
 });
 
 async function createUser(

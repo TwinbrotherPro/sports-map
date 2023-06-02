@@ -1,4 +1,4 @@
-import { alpha, Button } from "@mui/material";
+import { Zoom } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import * as leaflet from "leaflet";
 import * as decoding from "polyline-encoded";
@@ -12,6 +12,10 @@ import {
 } from "react-leaflet";
 import { Screenshot } from "./screenshot";
 import { ActivityOverlay } from "./components/ActivityOverlay";
+import { useGeoLocation } from "./hooks/useGeoLocation";
+import { LocationCircle } from "./components/LocationCircle";
+import { Profile } from "./components/Profile";
+import { ControlMenu } from "./components/Control";
 
 const PREFIX = "Dashboard";
 
@@ -30,24 +34,6 @@ const Root = styled("div")(() => ({
 
   // In use?
   [`& .${classes.marker}`]: { color: "green", textAlign: "left" },
-
-  [`& .${classes.profile}`]: {
-    margin: "5px",
-    opacity: "0.70",
-    "& img": {
-      borderRadius: "50%",
-    },
-  },
-}));
-
-const Control = styled("div")(({ theme }) => ({
-  paddingRight: "50%",
-  backgroundColor: alpha(theme.palette.info.light, 0.5),
-}));
-
-const ControlButton = styled(Button)(({ theme }) => ({
-  margin: 5,
-  backgroundColor: theme.palette.primary.dark,
 }));
 
 function ActivityMaker({
@@ -121,60 +107,6 @@ function ActivityMaker({
   );
 }
 
-function Profile({ athlete }) {
-  return (
-    <div className={"leaflet-top leaflet-right profile " + classes.profile}>
-      <img src={athlete.profile} alt="Profile Image" />
-    </div>
-  );
-}
-
-function ControlMenu({
-  outerBounds,
-  setCurrentActivityIndex,
-  isMarkersDisabled,
-  setIsMarkersDisabled,
-  isHeatMapEnabled,
-  setIsHeatMapEnabled,
-}) {
-  const classNames = `leaflet-bottom leaflet-control`;
-  const map = useMap();
-
-  const onClickBack = () => {
-    map.flyToBounds(outerBounds, { animate: true, duration: 1.5 });
-    setCurrentActivityIndex(null);
-  };
-
-  return (
-    <Control className={classNames}>
-      <ControlButton variant="contained" onClick={onClickBack} size="small">
-        Zoom out
-      </ControlButton>
-      <ControlButton
-        variant="contained"
-        size="small"
-        onClick={() => {
-          setIsMarkersDisabled(!isMarkersDisabled);
-        }}
-      >
-        {isMarkersDisabled ? "Enable Markers" : "Disable Markers"}
-      </ControlButton>
-      <ControlButton
-        size="small"
-        variant="contained"
-        onClick={() => {
-          setIsHeatMapEnabled(!isHeatMapEnabled);
-        }}
-      >
-        {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
-      </ControlButton>
-      <ControlButton size="small" variant="contained">
-        Save Data
-      </ControlButton>
-    </Control>
-  );
-}
-
 function Dashboard({ activities, athlete }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
   const [currentActivity, setCurrentActivity] = useState<{
@@ -195,7 +127,6 @@ function Dashboard({ activities, athlete }) {
     const activity = activities.find(
       (activity) => activity.id === currentActivityIndex
     );
-    console.log("test", activity);
     if (activity) {
       setCurrentActivity({
         distance: activity.distance,
@@ -210,8 +141,6 @@ function Dashboard({ activities, athlete }) {
       setCurrentActivity(null);
     }
   }, [currentActivityIndex]);
-
-  console.log(isHeatMapEnabled, "heatmapMode");
 
   const markers = activities.map((activity) => (
     <ActivityMaker
@@ -247,6 +176,7 @@ function Dashboard({ activities, athlete }) {
         // Load unprefixed css class
         className="mapid"
       >
+        <LocationCircle />
         <Screenshot />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

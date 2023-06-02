@@ -7,6 +7,7 @@
     "@emotion/styled": "11.11.0",
     "@mui/icons-material": "5.11.16",
     "@mui/material": "5.13.0",
+    "firebase": "^9.22.0",
     "leaflet": "1.9.3",
     "leaflet-simple-map-screenshoter": "0.5.0",
     "moment": "2.29.4",
@@ -40,7 +41,7 @@
     "@types/node": "16.18.30",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
-    "@types/react-leaflet": "2.8.3"
+    "@types/react-leaflet": "3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
