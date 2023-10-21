@@ -34,7 +34,7 @@
     "workbox-streams": "6.5.4"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "14.4.3",
     "@types/jest": "28.1.8",
