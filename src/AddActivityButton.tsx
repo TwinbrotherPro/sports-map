@@ -1,11 +1,11 @@
 import { CircularProgress, Fade } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useQuery } from "react-query";
 import { MainPane } from "./components/MainPane";
 import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
 import { useAuthAthlete } from "./hooks/useAuthAthlete";
 import { ReactComponent as ConnectButton } from "./misc/btn_strava_connectwith_orange.svg";
+import { useActivites } from "./hooks/useActivities";
 
 const PREFIX = "AddActivityButton";
 
@@ -27,33 +27,7 @@ function AddActivityButton() {
 
   const { accessToken, athlete, status } = useAuthAthlete();
 
-  const {
-    data: activities,
-    status: activityStatus,
-    error,
-  } = useQuery(
-    "activityList",
-    async () => {
-      const tenYearsBefore = await import("moment").then((moment) =>
-        moment.default().subtract(10, "year").unix()
-      );
-      let currentPage = 1;
-      let activities = [];
-      let continuePaging = true;
-      while (continuePaging) {
-        const response = await fetch(
-          `https://www.strava.com/api/v3/athlete/activities?after=${tenYearsBefore}&per_page=100&page=${currentPage}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        const activityPage = await response.json();
-        activities.push(...activityPage);
-        currentPage++;
-        continuePaging = activityPage.length === 100;
-      }
-      return activities;
-    },
-    { enabled: !!accessToken, refetchOnWindowFocus: false }
-  );
+  const { activities, activityStatus, error } = useActivites(accessToken);
 
   if (!accessToken) {
     return (
@@ -62,7 +36,7 @@ function AddActivityButton() {
           Shows your activities of the last year on a global map visualisation.
         </p>
         <a href={config.stravaLink}>
-          <ConnectButton className={classes.donate}>Donate</ConnectButton>
+          <ConnectButton className={classes.donate} />
         </a>
       </MainPane>
     );

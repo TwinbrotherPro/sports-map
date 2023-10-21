@@ -13,6 +13,7 @@ function getConfig() {
         ? `https://us-central1-strava-dashboard-368b0.cloudfunctions.net/stravaproxy/dev/oauth/token?client_id=59296&client_secret=NONE&code=${code}&grant_type=authorization_code`
         : `https://us-central1-strava-dashboard-368b0.cloudfunctions.net/stravaproxy/oauth/token?client_id=58846&client_secret=NONE&code=${code}&grant_type=authorization_code`;
     },
+    tokenExchange: "https://tokenexchangesecondgen-wzxfe7ro2q-uc.a.run.app",
   };
 }
 

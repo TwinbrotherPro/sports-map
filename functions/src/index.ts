@@ -1,4 +1,5 @@
 import * as functions from "firebase-functions";
+import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as express from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -25,7 +26,7 @@ const stravaAuthProxy = (secret: string) =>
 app.use("/oauth", stravaAuthProxy(prodSecret));
 app.use("/dev/oauth", stravaAuthProxy(devSecret));
 exports.stravaproxy = functions.https.onRequest(app);
-exports.tokenExchange = functions.https.onRequest(async (req, res) => {
+exports.tokenExchangeSecondGen = onRequest({ cors: true }, async (req, res) => {
   // Call strava /athlete
   const config: AxiosRequestConfig = {
     baseURL: STRAVA_BASE_PATH,
@@ -54,7 +55,6 @@ exports.tokenExchange = functions.https.onRequest(async (req, res) => {
     if (snapshot.empty) {
       uuid = await createUser(
         usefulData.stravaId,
-        "blinddog@hotmail.de",
         usefulData.photoUrl,
         usefulData.name
       );
@@ -79,17 +79,11 @@ exports.tokenExchange = functions.https.onRequest(async (req, res) => {
   }
 });
 
-async function createUser(
-  stravaId: string,
-  email: string,
-  photoUrl: string,
-  name: string
-) {
+async function createUser(stravaId: string, photoUrl: string, name: string) {
   const uuid = v4();
 
   // Create user in auth
   await admin.auth().createUser({
-    email: "blinddog@hotmail.de",
     photoURL: photoUrl,
     uid: uuid,
   });
@@ -97,7 +91,6 @@ async function createUser(
   // Create user in db
   const userRef = db.collection("users").doc(uuid);
   await userRef.set({
-    email,
     photoURL: photoUrl,
     stravaId,
     name,

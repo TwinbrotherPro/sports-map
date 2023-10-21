@@ -2,6 +2,9 @@ import { alpha, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
+import { useAuthAthlete } from "../hooks/useAuthAthlete";
+import { signIn, useAuthUser } from "../hooks/useAuthUser";
+import { SaveData } from "./SaveData";
 
 const Control = styled("div")(({ theme }) => ({
   backgroundColor: alpha(theme.palette.info.light, 0.5),
@@ -23,6 +26,7 @@ export function ControlMenu({
   const classNames = `leaflet-control leaflet-bottom`;
 
   const map = useMap();
+  const { accessToken } = useAuthAthlete();
   const [position, error] = useGeoLocation(false);
 
   const onClickBack = () => {
@@ -65,7 +69,7 @@ export function ControlMenu({
         {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
       </ControlButton>
       <ControlButton size="small" variant="contained">
-        Save Data
+        <SaveData />
       </ControlButton>
     </Control>
   );

@@ -1,4 +1,3 @@
-import { Zoom } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import * as leaflet from "leaflet";
 import * as decoding from "polyline-encoded";
@@ -12,10 +11,10 @@ import {
 } from "react-leaflet";
 import { Screenshot } from "./screenshot";
 import { ActivityOverlay } from "./components/ActivityOverlay";
-import { useGeoLocation } from "./hooks/useGeoLocation";
 import { LocationCircle } from "./components/LocationCircle";
 import { Profile } from "./components/Profile";
 import { ControlMenu } from "./components/Control";
+import { Activity } from "./model/ActivityModel";
 
 const PREFIX = "Dashboard";
 
@@ -107,8 +106,16 @@ function ActivityMaker({
   );
 }
 
-function Dashboard({ activities, athlete }) {
-  const [currentActivityIndex, setCurrentActivityIndex] = useState(null);
+function Dashboard({
+  activities,
+  athlete,
+}: {
+  activities: Activity[];
+  athlete: any;
+}) {
+  const [currentActivityIndex, setCurrentActivityIndex] = useState<
+    string | null
+  >(null);
   const [currentActivity, setCurrentActivity] = useState<{
     id: string;
     name: string;
