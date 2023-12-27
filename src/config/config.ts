@@ -6,7 +6,7 @@ function getConfig() {
     stravaLink:
       NODE_ENV === "development"
         ? "https://www.strava.com/oauth/authorize?client_id=59296&response_type=code&redirect_uri=http://localhost:3000/&approval_prompt=force&scope=activity:read_all"
-        : "https://www.strava.com/oauth/authorize?client_id=58846&response_type=code&redirect_uri=https://strava-dashboard-368b0.web.app/&approval_prompt=force&scope=activity:read_all",
+        : "https://www.strava.com/oauth/authorize?client_id=58846&response_type=code&redirect_uri=https://sportsmap.philippkraus.me/&approval_prompt=force&scope=activity:read_all",
 
     stravaAuth: (code) => {
       return NODE_ENV === "development"

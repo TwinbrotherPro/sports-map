@@ -98,3 +98,24 @@ async function createUser(stravaId: string, photoUrl: string, name: string) {
 
   return uuid;
 }
+
+exports.stravaWebhookDev = onRequest(async (req, res) => {
+  console.log(req.body);
+  res.status(200).send();
+});
+
+exports.stravaWebhook = onRequest(async (req, res) => {
+  console.log(req.body);
+  console.log(req.query);
+
+  if (req.query["hub.challenge"]) {
+    res.status(200).json({ "hub.challenge": req.query["hub.challenge"] });
+  }
+
+  const usersRef = db.collection("users");
+    const snapshot = await usersRef
+      .where("stravaId", "==", usefulData.stravaId)
+      .get();
+
+  res.status(200).send();
+});
