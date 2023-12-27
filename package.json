@@ -39,8 +39,8 @@
     "@testing-library/user-event": "14.5.1",
     "@types/jest": "28.1.8",
     "@types/node": "16.18.68",
-    "@types/react": "18.0.17",
-    "@types/react-dom": "18.0.6",
+    "@types/react": "18.2.45",
+    "@types/react-dom": "18.2.18",
     "@types/react-leaflet": "3.0.0"
   },
   "scripts": {
