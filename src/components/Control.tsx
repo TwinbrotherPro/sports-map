@@ -3,8 +3,8 @@ import { styled } from "@mui/material/styles";
 import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
-import { signIn, useAuthUser } from "../hooks/useAuthUser";
 import { SaveData } from "./SaveData";
+import { useState } from "react";
 
 const Control = styled("div")(({ theme }) => ({
   backgroundColor: alpha(theme.palette.info.light, 0.5),
@@ -28,6 +28,12 @@ export function ControlMenu({
   const map = useMap();
   const { accessToken } = useAuthAthlete();
   const [position, error] = useGeoLocation(false);
+
+  const [isSaveDataVisible, setSaveDataIsVisible] = useState(false);
+
+  const onClickSaveData = () => {
+    setSaveDataIsVisible(!isSaveDataVisible);
+  };
 
   const onClickBack = () => {
     map.flyToBounds(outerBounds, { animate: true, duration: 1.5 });
@@ -68,9 +74,17 @@ export function ControlMenu({
       >
         {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
       </ControlButton>
-      <ControlButton size="small" variant="contained">
-        <SaveData />
-      </ControlButton>
+
+      {false && (
+        <ControlButton
+          size="small"
+          variant="contained"
+          onClick={onClickSaveData}
+        >
+          Save Data
+        </ControlButton>
+      )}
+      {isSaveDataVisible && <SaveData />}
     </Control>
   );
 }
