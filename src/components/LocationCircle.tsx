@@ -13,6 +13,7 @@ export function LocationCircle() {
         weight: 10,
         fill: true,
       }}
+      radius={5}
     />
   ) : null;
 }
