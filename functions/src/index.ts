@@ -1,8 +1,8 @@
-import * as functions from "firebase-functions";
+import * as functions from "firebase-functions/v1";
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as express from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import { legacyCreateProxyMiddleware } from "http-proxy-middleware";
 import { devSecret, prodSecret } from "./credentials";
 import axios, { AxiosRequestConfig } from "axios";
 import { ATHLETE_PATH, STRAVA_BASE_PATH } from "./config";
@@ -14,7 +14,7 @@ const db = getFirestore();
 
 const app = express();
 const stravaAuthProxy = (secret: string) =>
-  createProxyMiddleware({
+  legacyCreateProxyMiddleware({
     target: "https://www.strava.com",
     changeOrigin: true,
     pathRewrite: { "^/dev": "" },

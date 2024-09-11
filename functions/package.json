@@ -10,22 +10,21 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "16"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@types/http-proxy-middleware": "1.0.0",
-    "axios": "1.6.3",
-    "express": "4.18.2",
-    "firebase-admin": "11.11.0",
-    "firebase-functions": "4.4.1",
-    "http-proxy-middleware": "2.0.6",
-    "uuid": "9.0.1"
+    "axios": "1.7.7",
+    "express": "4.20.0",
+    "firebase-admin": "11.11.1",
+    "firebase-functions": "6.0.0",
+    "http-proxy-middleware": "3.0.2",
+    "uuid": "10.0.0"
   },
   "devDependencies": {
+    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "5.59.6",
     "@typescript-eslint/parser": "5.59.6",
-    "@types/uuid": "9.0.7",
     "eslint": "8.22.0",
     "eslint-plugin-import": "2.29.1",
     "firebase-functions-test": "2.4.0",
