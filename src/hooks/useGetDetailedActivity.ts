@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export function useGetDetailedActivity(id: string, accessToken: string) {
   const {
@@ -6,7 +6,7 @@ export function useGetDetailedActivity(id: string, accessToken: string) {
     status: activityStatus,
     error,
   } = useQuery(
-    `detailedActivity${id}`,
+    [`detailedActivity${id}`],
     async () => {
       const response = await fetch(
         `https://www.strava.com/api/v3/activities/${id}`,

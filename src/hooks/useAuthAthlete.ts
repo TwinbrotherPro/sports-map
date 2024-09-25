@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from "react-router-dom";
 import getConfig from "../config/config";
 
@@ -16,7 +16,7 @@ export function useAuthAthlete() {
   }
 
   const { data, status } = useQuery(
-    "stravaAuth",
+    ["stravaAuth"],
     async () => {
       const response = await fetch(getConfig().stravaAuth(authCode), {
         method: "POST",

@@ -10,7 +10,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import LoyalityIcon from "@mui/icons-material/Loyalty";
 import SettingsBackupRestoreIcon from "@mui/icons-material/SettingsBackupRestore";
 import { lazy, Suspense, useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { Credits } from "./credits/Credits";
@@ -58,7 +58,7 @@ function App() {
 
   return (
     //<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-    <ThemeProvider theme={theme}>
+    (<ThemeProvider theme={theme}>
       <Root className={classes.app}>
         <div className={classes.banner}>
           <img
@@ -119,7 +119,7 @@ function App() {
           </BottomNavigation>
         </QueryClientProvider>
       </Root>
-    </ThemeProvider>
+    </ThemeProvider>)
   );
 }
 

@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * If no activity call has been made yet, this hooks expects "accessToken" to be part of the URL query
@@ -12,7 +12,7 @@ export function useActivites(accessToken: string) {
     status: activityStatus,
     error,
   } = useQuery(
-    "activityList",
+    ["activityList"],
     async () => {
       const tenYearsBefore = await import("moment").then((moment) =>
         moment.default().subtract(10, "year").unix()

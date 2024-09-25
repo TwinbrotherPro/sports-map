@@ -23,7 +23,7 @@ const SaveDataDialog = styled("div")(() => ({
 }));
 
 export function SaveData() {
-  const { accessToken, status: athleteStatus } = useAuthAthlete();
+  const { accessToken, status: athleteStatus} = useAuthAthlete();
   const { userToken } = useAuthUser(accessToken);
   const { activities, activityStatus } = useActivites(accessToken);
 
@@ -42,9 +42,7 @@ export function SaveData() {
 
   // TODO gray out until data is loaded
   if (
-    athleteStatus === "idle" ||
     athleteStatus === "loading" ||
-    activityStatus === "idle" ||
     activityStatus === "loading"
   ) {
     return <CircularProgress size={10} />;

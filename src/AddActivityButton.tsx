@@ -44,9 +44,7 @@ function AddActivityButton() {
 
   if (
     activityStatus === "loading" ||
-    activityStatus === "idle" ||
-    status === "loading" ||
-    status === "idle"
+    status === "loading"
   ) {
     return (
       <MainPane>

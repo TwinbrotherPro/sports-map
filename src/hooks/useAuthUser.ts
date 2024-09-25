@@ -2,7 +2,7 @@ import { initializeApp, FirebaseOptions } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 import getConfig from "../config/config";
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyBHc_cV0u0BlbIMU9HBw1CsbWaZupHW0p0",
@@ -19,7 +19,7 @@ export const fireBaseApp = initializeApp(firebaseConfig);
 
 export function useAuthUser(stravaToken?: string) {
   const { data, status } = useQuery(
-    "userAuth",
+    ["userAuth"],
     async () => {
       const endpoint = getConfig().tokenExchange;
       const request: RequestInfo = new Request(new URL(endpoint), {
