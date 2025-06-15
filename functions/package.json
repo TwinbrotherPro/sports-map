@@ -17,7 +17,7 @@
     "axios": "1.8.2",
     "express": "4.21.2",
     "firebase-admin": "11.11.1",
-    "firebase-functions": "6.1.1",
+    "firebase-functions": "6.3.2",
     "http-proxy-middleware": "3.0.5",
     "uuid": "11.1.0"
   },
