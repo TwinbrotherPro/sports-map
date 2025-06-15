@@ -17,12 +17,12 @@ export function useActivities(accessToken: string) {
   } = useInfiniteQuery({
     queryKey: ["activities"],
     queryFn: async ({ pageParam = 1 }) => {
-      const tenYearsBefore = await import("moment").then((moment) =>
-        moment.default().subtract(10, "year").unix()
+      const today = await import("moment").then((moment) =>
+        moment.default().unix()
       );
 
       const response = await fetch(
-        `https://www.strava.com/api/v3/athlete/activities?after=${tenYearsBefore}&per_page=100&page=${pageParam}`,
+        `https://www.strava.com/api/v3/athlete/activities?before=${today}&per_page=100&page=${pageParam}`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
