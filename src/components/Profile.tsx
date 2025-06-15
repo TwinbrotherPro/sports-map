@@ -11,7 +11,7 @@ const ProfileBox = styled("div")(() => ({
 export function Profile({ athlete }) {
   return (
     <ProfileBox className={"leaflet-top leaflet-right profile"}>
-      <img src={athlete.profile} alt="Profile Image" />
+      <img src={athlete.profile} alt="Profile" />
     </ProfileBox>
   );
 }

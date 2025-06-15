@@ -5,17 +5,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { MainPane } from "../components/MainPane";
 import favIcon from "../misc/favicon.png";
 
-const PREFIX = "Credits";
-const classes = {};
-const StyledMainPane = styled(MainPane)({});
 
 export function Credits() {
   return (
-    <StyledMainPane>
+    <MainPane>
       <List>
         <ListItem>
           <ListItemIcon>
@@ -35,6 +31,6 @@ export function Credits() {
           </ListItemText>
         </ListItem>
       </List>
-    </StyledMainPane>
+    </MainPane>
   );
 }

@@ -1,14 +1,13 @@
-import { Fade, IconButton, Modal } from "@mui/material";
+import { Button, Fade, IconButton, Modal } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Favorite } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-import ShareIcon from "@mui/icons-material/Share";
 import moment from "moment";
 import { useState } from "react";
-import polyline from "@mapbox/polyline";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 import { ActivitySymbol } from "./ActivitySymbol";
+import { getGPXFile } from "../utils/gpx";
 
 const PREFIX = "ActivityOverlay";
 
@@ -19,12 +18,31 @@ const classes = {
   heading: `${PREFIX}-heading`,
   favorites: `${PREFIX}-favorites`,
   favoritesIcon: `${PREFIX}-favoritesIcon`,
-  stravaBackLink: `${PREFIX}-stravaBackLink`,
   primaryImage: `${PREFIX}-primaryImage`,
   details: `${PREFIX}-details`,
   stats: `${PREFIX}-stats`,
   modalImg: `${PREFIX}-modalImg`,
 };
+
+const DownloadButton = styled("div")(() => ({
+  right: "0px",
+}));
+
+const Footer = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "baseline",
+  "& a:link, a:visited": {
+    color: "#FC4C02",
+    textDecoration: "none",
+  },
+  "& a:hover": {
+    color: "#ca3e02",
+    textDecoration: "none",
+  },
+  marginTop: "15px",
+}));
+
 
 const Root = styled("div")(() => ({
   [`&.${classes.overlay}`]: {
@@ -81,18 +99,6 @@ const Root = styled("div")(() => ({
     marginRight: "2px",
   },
 
-  [`& .${classes.stravaBackLink}`]: {
-    "& a:link, a:visited": {
-      color: "#FC4C02",
-      textDecoration: "none",
-    },
-    "& a:hover": {
-      color: "#ca3e02",
-      textDecoration: "none",
-    },
-    marginTop: "15px",
-  },
-
   [`& .${classes.primaryImage}`]: {
     width: "50%",
     ["@media (min-width:700px)"]: {
@@ -137,10 +143,6 @@ const ModalImg = styled("img")({
   position: "absolute",
 });
 
-function polylineToGPX(points: [number, number][], name: string): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="YourAppName" xmlns="http://www.topografix.com/GPX/1/1">\n  <trk>\n    <name>${name}</name>\n    <trkseg>\n      ${points.map(([lat, lon]) => `<trkpt lat=\"${lat}\" lon=\"${lon}\"></trkpt>`).join('\n      ')}\n    </trkseg>\n  </trk>\n</gpx>`;
-}
-
 export function ActivityOverlay({
   activity,
   setCurrentActivityIndex,
@@ -166,25 +168,14 @@ export function ActivityOverlay({
   const handleClose = () => setModalIsOpen(false);
   const handleClick = () => setModalIsOpen(!modalIsOpen); // TODO Find better way to handle open and close
 
-  const getGPXFile = () => {
-    if (!detailedActivity?.map?.polyline) return null;
-    const points = polyline.decode(detailedActivity.map.polyline);
-    const gpxContent = polylineToGPX(points, activity.name);
-    return new File(
-      [gpxContent],
-      `${activity.name.replace(/\s+/g, '_') || 'activity'}.gpx`,
-      { type: "application/gpx+xml" }
-    );
-  };
-
   const handleDownloadGPX = () => {
-    const gpxFile = getGPXFile();
-    if (!gpxFile) return;
+    const gpxFile = getGPXFile(detailedActivity?.map?.polyline, activity.name);
     const url = URL.createObjectURL(gpxFile);
     const a = document.createElement('a');
     a.href = url;
     a.download = gpxFile.name;
     document.body.appendChild(a);
+    // Best way to do it like that?
     a.click();
     setTimeout(() => {
       URL.revokeObjectURL(url);
@@ -203,12 +194,6 @@ export function ActivityOverlay({
       >
         <CloseIcon />
       </IconButton>
-        <button
-          style={{ position: "absolute", right: 8, top: 10, zIndex: 1 }}
-          onClick={handleDownloadGPX}
-        >
-          Download GPX
-        </button>
       <div className={classes.headline}>
         <div className={classes.heading}>{activity.name}</div>
         <div className={classes.favorites}>
@@ -268,14 +253,20 @@ export function ActivityOverlay({
           </div>
         )}
       </div>
-      <div className={classes.stravaBackLink}>
+      <Footer>
         <a
           href={`https://www.strava.com/activities/${activity.id}`}
           target="_blank" rel="noreferrer"
         >
           View on Strava
         </a>
-      </div>
+        <DownloadButton>
+          <Button
+            onClick={handleDownloadGPX}
+          >Download GPX
+          </Button>
+        </DownloadButton>
+      </Footer>
     </Root>
   );
 }
