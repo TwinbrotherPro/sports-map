@@ -22,11 +22,13 @@ export function ControlMenu({
   setIsMarkersDisabled,
   isHeatMapEnabled,
   setIsHeatMapEnabled,
+  setNextPage,
+  hasNextPage,
 }) {
   const classNames = `leaflet-control leaflet-bottom`;
 
   const map = useMap();
-  const { accessToken } = useAuthAthlete();
+  useAuthAthlete();
   const [position, error] = useGeoLocation(false);
 
   const [isSaveDataVisible, setSaveDataIsVisible] = useState(false);
@@ -74,6 +76,16 @@ export function ControlMenu({
       >
         {isHeatMapEnabled ? "Disable Heatmap" : "Enable Heatmap"}
       </ControlButton>
+
+      {hasNextPage && <ControlButton
+        size="small"
+        variant="contained"
+        onClick={() => {
+          setNextPage();
+        }}
+      >
+        Next Page
+      </ControlButton>}
 
       {false && (
         <ControlButton

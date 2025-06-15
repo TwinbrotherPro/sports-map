@@ -109,9 +109,13 @@ function ActivityMaker({
 function Dashboard({
   activities,
   athlete,
+  setNextPage,
+  hasNextPage,
 }: {
   activities: Activity[];
   athlete: any;
+  setNextPage: () => void;
+  hasNextPage: boolean;
 }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState<
     string | null
@@ -126,9 +130,9 @@ function Dashboard({
     type: string;
   } | null>(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
+  const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
-  const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
 
   useEffect(() => {
     const activity = activities.find(
@@ -147,7 +151,7 @@ function Dashboard({
     } else {
       setCurrentActivity(null);
     }
-  }, [currentActivityIndex]);
+  }, [currentActivityIndex, activities]);
 
   const markers = activities.map((activity) => (
     <ActivityMaker
@@ -198,6 +202,8 @@ function Dashboard({
           setIsMarkersDisabled={setIsMarkersDisabled}
           isHeatMapEnabled={isHeatMapEnabled}
           setIsHeatMapEnabled={setIsHeatMapEnabled}
+          setNextPage={setNextPage}
+          hasNextPage={hasNextPage}
         />
       </MapContainer>
     </Root>

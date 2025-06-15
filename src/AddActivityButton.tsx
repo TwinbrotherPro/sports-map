@@ -5,7 +5,7 @@ import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
 import { useAuthAthlete } from "./hooks/useAuthAthlete";
 import { ReactComponent as ConnectButton } from "./misc/btn_strava_connectwith_orange.svg";
-import { useActivites } from "./hooks/useActivities";
+import { useActivities } from "./hooks/useActivities";
 
 const PREFIX = "AddActivityButton";
 
@@ -27,7 +27,7 @@ function AddActivityButton() {
 
   const { accessToken, athlete, status } = useAuthAthlete();
 
-  const { activities, activityStatus, error } = useActivites(accessToken);
+  const { activities, activityStatus, error, nextPage, hasNextPage } = useActivities(accessToken);
 
   if (!accessToken) {
     return (
@@ -64,7 +64,11 @@ function AddActivityButton() {
   if (activities) {
     return (
       <StyledFade timeout={100000}>
-        <Dashboard activities={activities} athlete={athlete} />
+        <Dashboard
+          activities={activities}
+          athlete={athlete}
+          setNextPage={nextPage}
+          hasNextPage={hasNextPage} />
       </StyledFade>
     );
   }

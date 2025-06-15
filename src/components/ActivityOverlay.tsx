@@ -1,11 +1,12 @@
 import { Fade, IconButton, Modal } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { FavoriteBorder } from "@mui/icons-material";
+import { Favorite } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import { useState } from "react";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
+import { ActivitySymbol } from "./ActivitySymbol";
 
 const PREFIX = "ActivityOverlay";
 
@@ -71,7 +72,7 @@ const Root = styled("div")(() => ({
     flexDirection: "row",
     alignItems: "center",
     color: "#FC4C02 ",
-    opacity: "0.7",
+    opacity: "0.9",
   },
 
   [`& .${classes.favoritesIcon}`]: {
@@ -173,7 +174,7 @@ export function ActivityOverlay({
       <div className={classes.headline}>
         <div className={classes.heading}>{activity.name}</div>
         <div className={classes.favorites}>
-          <FavoriteBorder
+          <Favorite
             className={classes.favoritesIcon}
             fontSize="inherit"
           />
@@ -182,7 +183,7 @@ export function ActivityOverlay({
       </div>
       <div className={classes.details}>
         <div className={classes.stats}>
-          <div>Type: {activity.type}</div>
+          <div>Type: {activity.type} <ActivitySymbol activityType={activity.type} /></div>
           <div>
             Start: {moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}
           </div>

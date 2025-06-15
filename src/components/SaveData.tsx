@@ -1,5 +1,5 @@
 import { CircularProgress } from "@mui/material";
-import { useActivites } from "../hooks/useActivities";
+import { useActivities } from "../hooks/useActivities";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { fireBaseApp, signIn, useAuthUser } from "../hooks/useAuthUser";
 import { doc, getFirestore, writeBatch } from "firebase/firestore";
@@ -8,7 +8,7 @@ import styled from "@emotion/styled";
 const db = getFirestore(fireBaseApp);
 
 const SaveDataDialog = styled("div")(() => ({
-  position: "absolute",
+  //position: "absolute",
   height: "35%",
   width: "100%",
   minWidth: "350px",
@@ -16,7 +16,7 @@ const SaveDataDialog = styled("div")(() => ({
   right: "0px",
   zIndex: 1001,
   boxShadow: "-5px 7px 10px 0px grey",
-  boxSizing: "border-box",
+  //boxSizing: "border-box",
   padding: "10px 5px",
   bottom: "0px",
   marginBottom: "10px",
@@ -25,7 +25,7 @@ const SaveDataDialog = styled("div")(() => ({
 export function SaveData() {
   const { accessToken, status: athleteStatus} = useAuthAthlete();
   const { userToken } = useAuthUser(accessToken);
-  const { activities, activityStatus } = useActivites(accessToken);
+  const { activities, activityStatus } = useActivities(accessToken);
 
   const onSaveData = async () => {
     const user = await signIn(userToken);

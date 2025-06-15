@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 /**
  * If no activity call has been made yet, this hooks expects "accessToken" to be part of the URL query
@@ -6,34 +6,51 @@ import { useQuery } from '@tanstack/react-query';
  * Once an activity call has been made it returns the cached activity data.
  *
  */
-export function useActivites(accessToken: string) {
+export function useActivities(accessToken: string) {
   const {
-    data: activities,
+    data,
     status: activityStatus,
     error,
-  } = useQuery(
-    ["activityList"],
-    async () => {
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["activities"],
+    queryFn: async ({ pageParam = 1 }) => {
       const tenYearsBefore = await import("moment").then((moment) =>
         moment.default().subtract(10, "year").unix()
       );
-      let currentPage = 1;
-      let activities = [];
-      let continuePaging = true;
-      while (continuePaging) {
-        const response = await fetch(
-          `https://www.strava.com/api/v3/athlete/activities?after=${tenYearsBefore}&per_page=100&page=${currentPage}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        const activityPage = await response.json();
-        activities.push(...activityPage);
-        currentPage++;
-        continuePaging = activityPage.length === 100;
-      }
-      return activities;
-    },
-    { enabled: !!accessToken, refetchOnWindowFocus: false }
-  );
 
-  return { activities, activityStatus, error }; // TODO type activity
+      const response = await fetch(
+        `https://www.strava.com/api/v3/athlete/activities?after=${tenYearsBefore}&per_page=100&page=${pageParam}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch activities: ${response.statusText}`);
+      }
+
+      return response.json();
+    },
+    getNextPageParam: (lastPage, pages) => {
+      // If the last page has 100 items, there might be more pages
+      return lastPage.length === 100 ? pages.length + 1 : undefined;
+    },
+    enabled: !!accessToken,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  // Flatten all pages into a single array
+  const activities = data?.pages.flatMap(page => page) ?? [];
+
+  return {
+    activities,
+    activityStatus,
+    error,
+    nextPage: fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  };
 }
