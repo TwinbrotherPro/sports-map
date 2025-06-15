@@ -2,8 +2,10 @@ import { Fade, IconButton, Modal } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Favorite } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
+import ShareIcon from "@mui/icons-material/Share";
 import moment from "moment";
 import { useState } from "react";
+import polyline from "@mapbox/polyline";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 import { ActivitySymbol } from "./ActivitySymbol";
@@ -135,6 +137,10 @@ const ModalImg = styled("img")({
   position: "absolute",
 });
 
+function polylineToGPX(points: [number, number][], name: string): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="YourAppName" xmlns="http://www.topografix.com/GPX/1/1">\n  <trk>\n    <name>${name}</name>\n    <trkseg>\n      ${points.map(([lat, lon]) => `<trkpt lat=\"${lat}\" lon=\"${lon}\"></trkpt>`).join('\n      ')}\n    </trkseg>\n  </trk>\n</gpx>`;
+}
+
 export function ActivityOverlay({
   activity,
   setCurrentActivityIndex,
@@ -160,6 +166,32 @@ export function ActivityOverlay({
   const handleClose = () => setModalIsOpen(false);
   const handleClick = () => setModalIsOpen(!modalIsOpen); // TODO Find better way to handle open and close
 
+  const getGPXFile = () => {
+    if (!detailedActivity?.map?.polyline) return null;
+    const points = polyline.decode(detailedActivity.map.polyline);
+    const gpxContent = polylineToGPX(points, activity.name);
+    return new File(
+      [gpxContent],
+      `${activity.name.replace(/\s+/g, '_') || 'activity'}.gpx`,
+      { type: "application/gpx+xml" }
+    );
+  };
+
+  const handleDownloadGPX = () => {
+    const gpxFile = getGPXFile();
+    if (!gpxFile) return;
+    const url = URL.createObjectURL(gpxFile);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = gpxFile.name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, 100);
+  };
+
   return (
     <Root className={classes.overlay}>
       <IconButton
@@ -171,6 +203,12 @@ export function ActivityOverlay({
       >
         <CloseIcon />
       </IconButton>
+        <button
+          style={{ position: "absolute", right: 8, top: 10, zIndex: 1 }}
+          onClick={handleDownloadGPX}
+        >
+          Download GPX
+        </button>
       <div className={classes.headline}>
         <div className={classes.heading}>{activity.name}</div>
         <div className={classes.favorites}>
@@ -233,7 +271,7 @@ export function ActivityOverlay({
       <div className={classes.stravaBackLink}>
         <a
           href={`https://www.strava.com/activities/${activity.id}`}
-          target="_blank"
+          target="_blank" rel="noreferrer"
         >
           View on Strava
         </a>
