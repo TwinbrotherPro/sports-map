@@ -24,6 +24,7 @@ export function ControlMenu({
   setIsHeatMapEnabled,
   setNextPage,
   hasNextPage,
+  isFetchingNextPage
 }) {
   const classNames = `leaflet-control leaflet-bottom`;
 
@@ -83,8 +84,8 @@ export function ControlMenu({
         onClick={() => {
           setNextPage();
         }}
-      >
-        Next Page
+      > 
+      {isFetchingNextPage ? "Loading..." : "Next Page"}
       </ControlButton>}
 
       {false && (

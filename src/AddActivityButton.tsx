@@ -27,7 +27,7 @@ function AddActivityButton() {
 
   const { accessToken, athlete, status } = useAuthAthlete();
 
-  const { activities, activityStatus, error, nextPage, hasNextPage } = useActivities(accessToken);
+  const { activities, activityStatus, error, nextPage, hasNextPage, isFetchingNextPage } = useActivities(accessToken);
 
   if (!accessToken) {
     return (
@@ -68,7 +68,8 @@ function AddActivityButton() {
           activities={activities}
           athlete={athlete}
           setNextPage={nextPage}
-          hasNextPage={hasNextPage} />
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage} />
       </StyledFade>
     );
   }

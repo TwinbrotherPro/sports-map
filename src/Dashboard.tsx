@@ -111,11 +111,13 @@ function Dashboard({
   athlete,
   setNextPage,
   hasNextPage,
+  isFetchingNextPage,
 }: {
   activities: Activity[];
   athlete: any;
   setNextPage: () => void;
   hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState<
     string | null
@@ -204,6 +206,7 @@ function Dashboard({
           setIsHeatMapEnabled={setIsHeatMapEnabled}
           setNextPage={setNextPage}
           hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
         />
       </MapContainer>
     </Root>
