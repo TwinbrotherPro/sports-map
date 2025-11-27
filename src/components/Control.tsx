@@ -10,6 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
+import { useDraggablePosition } from "../hooks/useDraggablePosition";
 import { SaveData } from "./SaveData";
 import { useState } from "react";
 
@@ -17,23 +18,20 @@ const ControlContainer = styled("div")<{ isMinimized?: boolean }>(
   ({ isMinimized }) => ({
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: "8px",
-    padding: isMinimized ? "4px" : "10px",
+    padding: isMinimized ? "0 0 4px 0" : "0",
     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",
     maxWidth: isMinimized ? "auto" : "200px",
     minWidth: isMinimized ? "32px" : "auto",
     position: "relative",
-    margin: "10px",
-    zIndex: 10000,
     pointerEvents: "auto",
     display: "flex",
     flexDirection: "column",
     alignItems: isMinimized ? "center" : "stretch",
-    justifyContent: isMinimized ? "center" : "flex-start",
+    justifyContent: "flex-start",
 
     "@media (max-width: 700px)": {
       maxWidth: isMinimized ? "auto" : "calc(100% - 40px)",
       backgroundColor: "rgba(255, 255, 255, 0.98)",
-      margin: "10px",
     },
   })
 );
@@ -43,9 +41,15 @@ const ControlButtonGroup = styled("div")({
   flexDirection: "column",
   gap: "6px",
   marginBottom: "12px",
+  padding: "0 10px",
 
   "&:last-child": {
     marginBottom: 0,
+    paddingBottom: "10px",
+  },
+
+  "&:first-of-type": {
+    paddingTop: "10px",
   },
 });
 
@@ -89,7 +93,7 @@ const ControlButton = styled(Button)({
 
 const CollapseButton = styled(IconButton)({
   position: "absolute",
-  top: "5px",
+  top: "13px",
   right: "5px",
   padding: "4px",
   color: "#FC4C02",
@@ -102,12 +106,58 @@ const CollapseButton = styled(IconButton)({
 
 const ExpandButton = styled(IconButton)({
   padding: "4px",
+  margin: "0 4px 0 4px",
   color: "#FC4C02",
   pointerEvents: "auto",
   "&:hover": {
     backgroundColor: "rgba(252, 76, 2, 0.08)",
   },
 });
+
+const ControlWrapper = styled("div")<{
+  isDragging?: boolean;
+}>(({ isDragging }) => ({
+  position: "fixed",
+  zIndex: 10000,
+  pointerEvents: "auto",
+  willChange: "transform",
+  boxShadow: isDragging ? "0px 4px 12px rgba(0, 0, 0, 0.25)" : "none",
+  userSelect: isDragging ? "none" : "auto",
+}));
+
+const DragHandle = styled("div")<{
+  isDragging?: boolean;
+  isMinimized?: boolean;
+}>(({ isDragging, isMinimized }) => ({
+  height: isMinimized ? "12px" : "8px",
+  width: "100%",
+  backgroundColor: isDragging
+    ? "rgba(252, 76, 2, 0.3)"
+    : "rgba(252, 76, 2, 0.15)",
+  cursor: isDragging ? "grabbing" : "grab",
+  userSelect: "none",
+  touchAction: "none",
+  borderRadius: "8px 8px 0 0",
+  transition: "background-color 0.15s ease",
+  marginBottom: isMinimized ? "4px" : "8px",
+  flexShrink: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  "&:hover": {
+    backgroundColor: "rgba(252, 76, 2, 0.25)",
+  },
+  "&:active": {
+    backgroundColor: "rgba(252, 76, 2, 0.35)",
+  },
+  "&::after": {
+    content: '""',
+    width: "30px",
+    height: "3px",
+    backgroundColor: "rgba(252, 76, 2, 0.4)",
+    borderRadius: "2px",
+  },
+}));
 
 export function ControlMenu({
   outerBounds,
@@ -120,14 +170,20 @@ export function ControlMenu({
   hasNextPage,
   isFetchingNextPage,
 }) {
-  const classNames = `leaflet-control leaflet-top leaflet-left`;
-
   const map = useMap();
   useAuthAthlete();
   const [position, error] = useGeoLocation(false);
 
   const [isSaveDataVisible, setSaveDataIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Draggable position hook
+  const {
+    position: dragPosition,
+    isDragging,
+    handlers,
+    containerRef,
+  } = useDraggablePosition({ x: 10, y: 10 });
 
   const onClickSaveData = () => {
     setSaveDataIsVisible(!isSaveDataVisible);
@@ -145,107 +201,129 @@ export function ControlMenu({
   };
 
   return (
-    <ControlContainer className={classNames} isMinimized={isMinimized}>
-      {isMinimized ? (
-        <ExpandButton
-          size="small"
-          onClick={() => setIsMinimized(false)}
-          aria-label="Expand controls"
-        >
-          <ExpandMoreIcon fontSize="small" />
-        </ExpandButton>
-      ) : (
-        <>
-          <CollapseButton
-            size="small"
-            onClick={() => setIsMinimized(true)}
-            aria-label="Collapse controls"
-          >
-            <ExpandLessIcon fontSize="small" />
-          </CollapseButton>
-
-          <ControlButtonGroup>
-            <GroupLabel>Navigation</GroupLabel>
-            <ControlButton
-              variant="contained"
-              onClick={onClickBack}
+    <ControlWrapper
+      ref={containerRef}
+      style={{
+        transform: `translate(${dragPosition.x}px, ${dragPosition.y}px)`,
+      }}
+      isDragging={isDragging}
+    >
+      <ControlContainer isMinimized={isMinimized}>
+        {isMinimized ? (
+          <>
+            <DragHandle
+              onPointerDown={handlers.onPointerDown}
+              isDragging={isDragging}
+              isMinimized={true}
+            />
+            <ExpandButton
               size="small"
-              fullWidth
-              startIcon={<ZoomOutMapIcon />}
+              onClick={() => setIsMinimized(false)}
+              aria-label="Expand controls"
             >
-              Zoom Out
-            </ControlButton>
-            {!error && (
+              <ExpandMoreIcon fontSize="small" />
+            </ExpandButton>
+          </>
+        ) : (
+          <>
+            <DragHandle
+              onPointerDown={handlers.onPointerDown}
+              isDragging={isDragging}
+              isMinimized={false}
+            />
+            <CollapseButton
+              size="small"
+              onClick={() => setIsMinimized(true)}
+              aria-label="Collapse controls"
+            >
+              <ExpandLessIcon fontSize="small" />
+            </CollapseButton>
+
+            <ControlButtonGroup>
+              <GroupLabel>Navigation</GroupLabel>
               <ControlButton
                 variant="contained"
-                onClick={onClickZoomIn}
+                onClick={onClickBack}
                 size="small"
                 fullWidth
-                startIcon={<MyLocationIcon />}
+                startIcon={<ZoomOutMapIcon />}
               >
-                Zoom In
+                Zoom Out
               </ControlButton>
+              {!error && (
+                <ControlButton
+                  variant="contained"
+                  onClick={onClickZoomIn}
+                  size="small"
+                  fullWidth
+                  startIcon={<MyLocationIcon />}
+                >
+                  Zoom In
+                </ControlButton>
+              )}
+            </ControlButtonGroup>
+
+            <ControlButtonGroup>
+              <GroupLabel>Display</GroupLabel>
+              <ControlButton
+                variant="contained"
+                size="small"
+                fullWidth
+                className={
+                  isMarkersDisabled ? "toggle-inactive" : "toggle-active"
+                }
+                onClick={() => setIsMarkersDisabled(!isMarkersDisabled)}
+                startIcon={<PlaceIcon />}
+              >
+                {isMarkersDisabled ? "Show Markers" : "Hide Markers"}
+              </ControlButton>
+              <ControlButton
+                variant="contained"
+                size="small"
+                fullWidth
+                className={
+                  isHeatMapEnabled ? "toggle-active" : "toggle-inactive"
+                }
+                onClick={() => setIsHeatMapEnabled(!isHeatMapEnabled)}
+                startIcon={<MapIcon />}
+              >
+                {isHeatMapEnabled ? "Hide Heatmap" : "Show Heatmap"}
+              </ControlButton>
+            </ControlButtonGroup>
+
+            {hasNextPage && (
+              <ControlButtonGroup>
+                <GroupLabel>Data</GroupLabel>
+                <ControlButton
+                  size="small"
+                  variant="contained"
+                  fullWidth
+                  onClick={() => setNextPage()}
+                  disabled={isFetchingNextPage}
+                  startIcon={<NavigateNextIcon />}
+                >
+                  {isFetchingNextPage ? "Loading..." : "Next Page"}
+                </ControlButton>
+              </ControlButtonGroup>
             )}
-          </ControlButtonGroup>
 
-          <ControlButtonGroup>
-            <GroupLabel>Display</GroupLabel>
-            <ControlButton
-              variant="contained"
-              size="small"
-              fullWidth
-              className={
-                isMarkersDisabled ? "toggle-inactive" : "toggle-active"
-              }
-              onClick={() => setIsMarkersDisabled(!isMarkersDisabled)}
-              startIcon={<PlaceIcon />}
-            >
-              {isMarkersDisabled ? "Show Markers" : "Hide Markers"}
-            </ControlButton>
-            <ControlButton
-              variant="contained"
-              size="small"
-              fullWidth
-              className={isHeatMapEnabled ? "toggle-active" : "toggle-inactive"}
-              onClick={() => setIsHeatMapEnabled(!isHeatMapEnabled)}
-              startIcon={<MapIcon />}
-            >
-              {isHeatMapEnabled ? "Hide Heatmap" : "Show Heatmap"}
-            </ControlButton>
-          </ControlButtonGroup>
+            {false && (
+              <ControlButtonGroup>
+                <ControlButton
+                  size="small"
+                  variant="contained"
+                  fullWidth
+                  onClick={onClickSaveData}
+                >
+                  Save Data
+                </ControlButton>
+              </ControlButtonGroup>
+            )}
+          </>
+        )}
 
-          {hasNextPage && (
-            <ControlButtonGroup>
-              <GroupLabel>Data</GroupLabel>
-              <ControlButton
-                size="small"
-                variant="contained"
-                fullWidth
-                onClick={() => setNextPage()}
-                disabled={isFetchingNextPage}
-                startIcon={<NavigateNextIcon />}
-              >
-                {isFetchingNextPage ? "Loading..." : "Next Page"}
-              </ControlButton>
-            </ControlButtonGroup>
-          )}
-
-          {false && (
-            <ControlButtonGroup>
-              <ControlButton
-                size="small"
-                variant="contained"
-                fullWidth
-                onClick={onClickSaveData}
-              >
-                Save Data
-              </ControlButton>
-            </ControlButtonGroup>
-          )}
-        </>
-      )}
-
-      {isSaveDataVisible && <SaveData />}
-    </ControlContainer>
+        {isSaveDataVisible && <SaveData />}
+      </ControlContainer>
+    </ControlWrapper>
   );
 }
