@@ -24,9 +24,27 @@ const classes = {
   modalImg: `${PREFIX}-modalImg`,
 };
 
-const DownloadButton = styled("div")(() => ({
-  right: "0px",
-}));
+const CloseButton = styled(IconButton)({
+  position: "absolute",
+  top: "10px",
+  left: "5px",
+  padding: "4px",
+  color: "#FC4C02",
+  pointerEvents: "auto",
+  "&:hover": {
+    backgroundColor: "rgba(252, 76, 2, 0.08)",
+  },
+});
+
+const DownloadButton = styled(Button)({
+  backgroundColor: "#FC4C02",
+  color: "white",
+  "&:hover": {
+    backgroundColor: "#ca3e02",
+  },
+  textTransform: "none",
+  fontWeight: 500,
+});
 
 const Footer = styled("div")(() => ({
   display: "flex",
@@ -35,10 +53,11 @@ const Footer = styled("div")(() => ({
   "& a:link, a:visited": {
     color: "#FC4C02",
     textDecoration: "none",
+    fontWeight: 500,
   },
   "& a:hover": {
     color: "#ca3e02",
-    textDecoration: "none",
+    textDecoration: "underline",
   },
   marginTop: "15px",
 }));
@@ -49,14 +68,16 @@ const Root = styled("div")(() => ({
     height: "35%",
     width: "100%",
     minWidth: "350px",
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     right: "0px",
     zIndex: 1001,
-    boxShadow: "-5px 7px 10px 0px grey",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",
+    borderRadius: "8px",
     boxSizing: "border-box",
-    padding: "10px 5px",
+    padding: "10px",
     bottom: "0px",
     marginBottom: "10px",
+    marginLeft: "10px",
     "@media (min-width:700px)": {
       width: "350px",
       height: "100%",
@@ -76,10 +97,12 @@ const Root = styled("div")(() => ({
     display: "flex",
     flexDirection: "row",
     color: "#FC4C02",
-    borderBottom: "2px solid #FC4C02",
+    borderBottom: "1px solid rgba(252, 76, 2, 0.3)",
     margin: "8px 0",
     paddingBottom: "8px",
     justifyContent: "center",
+    fontSize: "16px",
+    fontWeight: 600,
   },
 
   [`& .${classes.heading}`]: {
@@ -184,15 +207,14 @@ export function ActivityOverlay({
 
   return (
     <Root className={classes.overlay}>
-      <IconButton
-        className={classes.closeIcon}
+      <CloseButton
         onClick={() => {
           setCurrentActivityIndex(null);
         }}
-        size="large"
+        size="small"
       >
         <CloseIcon />
-      </IconButton>
+      </CloseButton>
       <div className={classes.headline}>
         <div className={classes.heading}>{activity.name}</div>
         <div className={classes.favorites}>
@@ -241,6 +263,14 @@ export function ActivityOverlay({
               open={modalIsOpen}
               onClose={handleClose}
               closeAfterTransition
+              slotProps={{
+                backdrop: {
+                  sx: {
+                    backdropFilter: "blur(4px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  },
+                },
+              }}
             >
               <Fade in={modalIsOpen}>
                 <ModalImg
@@ -260,8 +290,8 @@ export function ActivityOverlay({
         >
           View on Strava
         </a>
-        <DownloadButton>
-          <Button onClick={handleDownloadGPX}>Download GPX</Button>
+        <DownloadButton onClick={handleDownloadGPX}>
+          Download GPX
         </DownloadButton>
       </Footer>
     </Root>
