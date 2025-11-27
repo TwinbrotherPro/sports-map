@@ -9,7 +9,6 @@ import {
   TileLayer,
   useMap,
 } from "react-leaflet";
-import { Screenshot } from "./screenshot";
 import { ActivityOverlay } from "./components/ActivityOverlay";
 import { LocationCircle } from "./components/LocationCircle";
 import { Profile } from "./components/Profile";
@@ -186,11 +185,11 @@ function Dashboard({
         bounds={leafletBounds}
         zoom={13}
         scrollWheelZoom={true}
+        zoomControl={false}
         // Load unprefixed css class
         className="mapid"
       >
         <LocationCircle />
-        <Screenshot />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

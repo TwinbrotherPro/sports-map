@@ -43,7 +43,6 @@ const Footer = styled("div")(() => ({
   marginTop: "15px",
 }));
 
-
 const Root = styled("div")(() => ({
   [`&.${classes.overlay}`]: {
     position: "absolute",
@@ -58,7 +57,7 @@ const Root = styled("div")(() => ({
     padding: "10px 5px",
     bottom: "0px",
     marginBottom: "10px",
-    ["@media (min-width:700px)"]: {
+    "@media (min-width:700px)": {
       width: "350px",
       height: "100%",
     },
@@ -101,7 +100,7 @@ const Root = styled("div")(() => ({
 
   [`& .${classes.primaryImage}`]: {
     width: "50%",
-    ["@media (min-width:700px)"]: {
+    "@media (min-width:700px)": {
       width: "330px",
       maxHeight: "330px",
       marginTop: "5px",
@@ -115,7 +114,7 @@ const Root = styled("div")(() => ({
   },
 
   [`& .${classes.details}`]: {
-    ["@media (min-width:700px)"]: {
+    "@media (min-width:700px)": {
       flexDirection: "column",
     },
     textAlign: "center",
@@ -126,7 +125,7 @@ const Root = styled("div")(() => ({
   },
 
   [`& .${classes.stats}`]: {
-    ["@media (min-width:700px)"]: {
+    "@media (min-width:700px)": {
       width: "100%",
     },
     width: "50%",
@@ -171,7 +170,7 @@ export function ActivityOverlay({
   const handleDownloadGPX = () => {
     const gpxFile = getGPXFile(detailedActivity?.map?.polyline, activity.name);
     const url = URL.createObjectURL(gpxFile);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = gpxFile.name;
     document.body.appendChild(a);
@@ -197,16 +196,16 @@ export function ActivityOverlay({
       <div className={classes.headline}>
         <div className={classes.heading}>{activity.name}</div>
         <div className={classes.favorites}>
-          <Favorite
-            className={classes.favoritesIcon}
-            fontSize="inherit"
-          />
+          <Favorite className={classes.favoritesIcon} fontSize="inherit" />
           <div>{activity.kudosCount}</div>
         </div>
       </div>
       <div className={classes.details}>
         <div className={classes.stats}>
-          <div>Type: {activity.type} <ActivitySymbol activityType={activity.type} /></div>
+          <div>
+            Type: {activity.type}{" "}
+            <ActivitySymbol activityType={activity.type} />
+          </div>
           <div>
             Start: {moment(activity.startDate).format("DD.MM.YYYY hh:mm A")}
           </div>
@@ -256,15 +255,13 @@ export function ActivityOverlay({
       <Footer>
         <a
           href={`https://www.strava.com/activities/${activity.id}`}
-          target="_blank" rel="noreferrer"
+          target="_blank"
+          rel="noreferrer"
         >
           View on Strava
         </a>
         <DownloadButton>
-          <Button
-            onClick={handleDownloadGPX}
-          >Download GPX
-          </Button>
+          <Button onClick={handleDownloadGPX}>Download GPX</Button>
         </DownloadButton>
       </Footer>
     </Root>
