@@ -24,3 +24,10 @@ yarn-error.log*
 
 #misc
 .firebase/*
+
+# GitHub Actions generated files
+build-errors.log
+claude-prompt.txt
+functions-errors.log
+functions-install-errors.log
+install-errors.log
