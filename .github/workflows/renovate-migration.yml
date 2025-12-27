@@ -191,7 +191,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
             $(cat claude-prompt.txt)
-          claude_args: "--permission-mode bypassPermissions --max-turns 15 --model claude-sonnet-4-5-20250929"
+          claude_args: "--permission-mode bypassPermissions --max-turns 30 --model claude-sonnet-4-5-20250929"
           show_full_output: true
 
   verify-build:
