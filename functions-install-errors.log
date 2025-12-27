@@ -1,0 +1,97 @@
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: functions@undefined
+npm warn Found: firebase-admin@11.11.1
+npm warn node_modules/firebase-admin
+npm warn   firebase-admin@"13.6.0" from the root project
+npm warn   2 more (firebase-functions, firebase-functions-test)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer firebase-admin@"^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0" from firebase-functions-test@3.3.0
+npm warn node_modules/firebase-functions-test
+npm warn   dev firebase-functions-test@"3.3.0" from the root project
+npm error code EUSAGE
+npm error
+npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+npm error
+npm error Invalid: lock file's firebase-admin@11.11.1 does not satisfy firebase-admin@13.6.0
+npm error Invalid: lock file's @fastify/busboy@1.2.1 does not satisfy @fastify/busboy@3.2.0
+npm error Invalid: lock file's @firebase/database-compat@0.3.4 does not satisfy @firebase/database-compat@2.1.0
+npm error Invalid: lock file's @firebase/database-types@0.10.4 does not satisfy @firebase/database-types@1.0.16
+npm error Invalid: lock file's @google-cloud/firestore@6.8.0 does not satisfy @google-cloud/firestore@7.11.6
+npm error Invalid: lock file's @google-cloud/storage@6.10.1 does not satisfy @google-cloud/storage@7.18.0
+npm error Missing: @types/node@22.19.3 from lock file
+npm error Missing: farmhash-modern@1.1.0 from lock file
+npm error Invalid: lock file's google-auth-library@8.8.0 does not satisfy google-auth-library@9.15.1
+npm error Invalid: lock file's jwks-rsa@3.0.1 does not satisfy jwks-rsa@3.2.0
+npm error Invalid: lock file's node-forge@1.3.1 does not satisfy node-forge@1.3.3
+npm error Invalid: lock file's @firebase/component@0.6.4 does not satisfy @firebase/component@0.7.0
+npm error Invalid: lock file's @firebase/database@0.14.4 does not satisfy @firebase/database@1.1.0
+npm error Invalid: lock file's @firebase/logger@0.4.0 does not satisfy @firebase/logger@0.5.0
+npm error Invalid: lock file's @firebase/util@1.9.3 does not satisfy @firebase/util@1.13.0
+npm error Invalid: lock file's tslib@2.5.0 does not satisfy tslib@2.8.1
+npm error Missing: @firebase/app-check-interop-types@0.3.3 from lock file
+npm error Invalid: lock file's @firebase/auth-interop-types@0.2.1 does not satisfy @firebase/auth-interop-types@0.2.4
+npm error Invalid: lock file's @firebase/app-types@0.9.0 does not satisfy @firebase/app-types@0.9.3
+npm error Missing: @opentelemetry/api@1.9.0 from lock file
+npm error Invalid: lock file's google-gax@3.6.0 does not satisfy google-gax@4.6.1
+npm error Invalid: lock file's protobufjs@7.2.3 does not satisfy protobufjs@7.5.4
+npm error Invalid: lock file's @google-cloud/paginator@3.0.7 does not satisfy @google-cloud/paginator@5.0.2
+npm error Invalid: lock file's @google-cloud/projectify@3.0.0 does not satisfy @google-cloud/projectify@4.0.0
+npm error Invalid: lock file's @google-cloud/promisify@3.0.1 does not satisfy @google-cloud/promisify@4.0.0
+npm error Invalid: lock file's duplexify@4.1.2 does not satisfy duplexify@4.1.3
+npm error Missing: fast-xml-parser@4.5.3 from lock file
+npm error Invalid: lock file's gaxios@5.1.0 does not satisfy gaxios@6.7.1
+npm error Missing: html-entities@2.6.0 from lock file
+npm error Invalid: lock file's retry-request@5.0.2 does not satisfy retry-request@7.0.2
+npm error Invalid: lock file's teeny-request@8.0.3 does not satisfy teeny-request@9.0.0
+npm error Invalid: lock file's end-of-stream@1.4.4 does not satisfy end-of-stream@1.4.5
+npm error Invalid: lock file's stream-shift@1.0.1 does not satisfy stream-shift@1.0.3
+npm error Missing: strnum@1.1.2 from lock file
+npm error Invalid: lock file's https-proxy-agent@5.0.1 does not satisfy https-proxy-agent@7.0.6
+npm error Invalid: lock file's node-fetch@2.6.7 does not satisfy node-fetch@2.7.0
+npm error Missing: uuid@9.0.1 from lock file
+npm error Invalid: lock file's gcp-metadata@5.2.0 does not satisfy gcp-metadata@6.1.1
+npm error Invalid: lock file's gtoken@6.1.2 does not satisfy gtoken@7.1.0
+npm error Invalid: lock file's jws@4.0.0 does not satisfy jws@4.0.1
+npm error Missing: google-logging-utils@0.0.2 from lock file
+npm error Invalid: lock file's @grpc/grpc-js@1.8.14 does not satisfy @grpc/grpc-js@1.14.3
+npm error Invalid: lock file's @grpc/proto-loader@0.7.13 does not satisfy @grpc/proto-loader@0.7.15
+npm error Invalid: lock file's proto3-json-serializer@1.1.1 does not satisfy proto3-json-serializer@2.0.2
+npm error Missing: uuid@9.0.1 from lock file
+npm error Missing: @grpc/proto-loader@0.8.0 from lock file
+npm error Missing: @js-sdsl/ordered-map@4.4.2 from lock file
+npm error Invalid: lock file's agent-base@6.0.2 does not satisfy agent-base@7.1.4
+npm error Invalid: lock file's bignumber.js@9.1.1 does not satisfy bignumber.js@9.3.1
+npm error Invalid: lock file's @types/jsonwebtoken@9.0.2 does not satisfy @types/jsonwebtoken@9.0.10
+npm error Invalid: lock file's jose@4.14.4 does not satisfy jose@4.15.9
+npm error Invalid: lock file's lru-memoizer@2.2.0 does not satisfy lru-memoizer@2.3.0
+npm error Missing: @types/ms@2.1.0 from lock file
+npm error Invalid: lock file's jwa@2.0.0 does not satisfy jwa@2.0.1
+npm error Missing: @types/request@2.48.13 from lock file
+npm error Missing: @types/caseless@0.12.5 from lock file
+npm error Missing: @types/tough-cookie@4.0.5 from lock file
+npm error Missing: form-data@2.5.5 from lock file
+npm error Missing: https-proxy-agent@5.0.1 from lock file
+npm error Missing: agent-base@6.0.2 from lock file
+npm error Invalid: lock file's http-parser-js@0.5.8 does not satisfy http-parser-js@0.5.10
+npm error Missing: undici-types@6.21.0 from lock file
+npm error Missing: agent-base@6.0.2 from lock file
+npm error
+npm error Clean install a project
+npm error
+npm error Usage:
+npm error npm ci
+npm error
+npm error Options:
+npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+npm error [--no-bin-links] [--no-fund] [--dry-run]
+npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+npm error
+npm error aliases: clean-install, ic, install-clean, isntall-clean
+npm error
+npm error Run "npm help ci" for more info
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-12-27T19_46_39_965Z-debug-0.log
