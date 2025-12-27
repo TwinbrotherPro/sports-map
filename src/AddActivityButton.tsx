@@ -43,8 +43,8 @@ function AddActivityButton() {
   }
 
   if (
-    activityStatus === "loading" ||
-    status === "loading"
+    activityStatus === "pending" ||
+    status === "pending"
   ) {
     return (
       <MainPane>

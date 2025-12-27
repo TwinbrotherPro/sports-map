@@ -13,7 +13,7 @@ export function useGeoLocation(watch: boolean) {
     return () => {
       map.stopLocate();
     };
-  }, []);
+  }, [map, watch]);
 
   map.on("locationfound", (event) => {
     console.log("Location found");
