@@ -1,0 +1,86 @@
+name: Build Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            functions/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Create credentials file for functions build
+        run: |
+          if [ -n "$FUNCTIONS_CREDENTIALS" ]; then
+            echo "$FUNCTIONS_CREDENTIALS" > functions/src/credentials.ts
+            echo "✓ Created functions/src/credentials.ts from secret"
+          else
+            echo "⚠ FUNCTIONS_CREDENTIALS secret not set - functions build may fail"
+          fi
+        env:
+          FUNCTIONS_CREDENTIALS: ${{ secrets.FUNCTIONS_CREDENTIALS }}
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: cd functions && npm ci
+
+      - name: Build frontend
+        id: build-frontend
+        run: npm run build
+
+      - name: Build functions
+        id: build-functions
+        run: cd functions && npm run build
+
+      - name: Comment on PR with success
+        if: success()
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "✅ **Build Validation Passed**
+
+          All builds completed successfully:
+          - Frontend build: ✅ Pass
+          - Functions build: ✅ Pass
+
+          The PR is ready for code review."
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Comment on PR with failure
+        if: failure()
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "❌ **Build Validation Failed**
+
+          One or more builds failed:
+          - Frontend build: ${{ steps.build-frontend.outcome == 'success' && '✅ Pass' || '❌ Fail' }}
+          - Functions build: ${{ steps.build-functions.outcome == 'success' && '✅ Pass' || '❌ Fail' }}
+
+          Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details."
+        env:
+          GH_TOKEN: ${{ github.token }}
