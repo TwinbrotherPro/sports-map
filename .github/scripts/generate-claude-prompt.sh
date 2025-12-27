@@ -33,7 +33,7 @@ Package Manager: npm (both frontend and functions)
 2. Identify the breaking changes in the updated package
 3. Fix the code to work with the new version
 4. Run "npm run build" (frontend) and "cd functions && npm run build" (backend) to verify fixes
-5. If builds succeed, commit the changes
+5. DO NOT commit changes - the GitHub Actions workflow will commit automatically after you're done
 
 Focus on:
 - Import path changes
