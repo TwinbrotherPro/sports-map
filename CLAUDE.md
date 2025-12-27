@@ -18,10 +18,10 @@ Sports Map is a React-based web application that visualizes Strava activities on
 
 ### Frontend (root directory)
 ```bash
-yarn start          # Run development server on http://localhost:3000
-yarn test           # Run tests in watch mode
-yarn build          # Build production bundle
-yarn deploy         # Deploy to Firebase hosting (runs build first)
+npm start           # Run development server on http://localhost:3000
+npm test            # Run tests in watch mode
+npm run build       # Build production bundle
+npm run deploy      # Deploy to Firebase hosting (runs build first)
 ```
 
 ### Firebase Functions (functions/ directory)
@@ -86,12 +86,37 @@ Environment-aware config returns different Strava OAuth URLs and client IDs for 
 
 Tests use React Testing Library and Jest (configured via `react-scripts`). Run individual tests:
 ```bash
-yarn test --testPathPattern=YourTest
+npm test -- --testPathPattern=YourTest
 ```
+
+## Automated Dependency Migration
+
+This repository uses a GitHub Actions workflow (`.github/workflows/renovate-migration.yml`) to automatically migrate breaking changes in Renovate PRs:
+
+- **Trigger**: Add the `migrate-auto` label to any Renovate PR on a `renovate/*` branch
+- **Process**: Claude Code analyzes build/test errors and applies fixes automatically
+- **Verification**: Builds and tests run after fixes to ensure they work
+- **Commits**: Changes are committed directly to the Renovate branch with AI attribution
+
+### Migration Guidance for Claude
+
+When fixing dependency migration issues:
+1. **Import paths**: Check for changes in package export structure (e.g., React Query v4 → v5)
+2. **API signatures**: Look for breaking changes in method parameters or return types
+3. **Type compatibility**: TypeScript strict mode is disabled (`strict: false`), but types must still be compatible
+4. **Deprecated methods**: Replace with recommended alternatives from changelog/migration guides
+5. **Build verification**: Always run `npm run build` (frontend) and `cd functions && npm run build` (backend) before committing
+
+### Common Migration Patterns
+- **React Query**: Uses v4 patterns (e.g., `useInfiniteQuery` with `getNextPageParam`)
+- **Material-UI**: v5 with Emotion styling
+- **Express**: v5 with modern middleware patterns
+- **Firebase Functions**: v6 with second-gen HTTPS functions
 
 ## Important Notes
 
 - **Node version**: Requires Node 22 (specified in both root and functions package.json)
+- **Package manager**: npm for both frontend and functions
 - **Firebase deployment**: `firebase deploy --only hosting` runs build automatically via `predeploy` hook
 - **Functions build**: TypeScript functions must be compiled before deployment (automatic via predeploy hook)
 - **Strava rate limits**: Be mindful of Strava API quotas during development
