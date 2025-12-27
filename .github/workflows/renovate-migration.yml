@@ -194,6 +194,29 @@ jobs:
           claude_args: "--permission-mode bypassPermissions --max-turns 30 --model claude-sonnet-4-5-20250929"
           show_full_output: true
 
+      - name: Commit changes if Claude was successful
+        if: steps.claude.outcome == 'success'
+        run: |
+          git config user.name "Claude Code Bot"
+          git config user.email "noreply@anthropic.com"
+
+          # Check if there are any changes to commit
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "$(cat <<'EOF'
+          Fix migration errors from Renovate update
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+          Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+          EOF
+          )"
+            git push origin HEAD:${{ github.head_ref }}
+            echo "✓ Changes committed and pushed to PR branch"
+          else
+            echo "No changes to commit"
+          fi
+
   verify-build:
     needs: [check-conditions, claude-fix]
     if: always() && needs.check-conditions.outputs.should_run == 'true'
