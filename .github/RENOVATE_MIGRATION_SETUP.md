@@ -36,14 +36,33 @@ claude /install-github-app
    - **Pull requests**: Read & write
    - **Issues**: Read & write
 
-### 2. Add Anthropic API Key
+### 2. Add Required Secrets
 
+Go to your repository **Settings** → **Secrets and variables** → **Actions** and add the following secrets:
+
+#### A. Anthropic API Key (Required)
 1. Get your API key from [console.anthropic.com](https://console.anthropic.com)
-2. Go to your repository **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-4. Add secret:
+2. Click **New repository secret**
+3. Add secret:
    - **Name**: `ANTHROPIC_API_KEY`
    - **Value**: Your Claude API key
+
+#### B. Functions Credentials (Required for Functions Build)
+Your `functions/src/credentials.ts` file is in `.gitignore` (correctly, to protect secrets), but the workflow needs it to build functions.
+
+1. Copy the entire contents of your local `functions/src/credentials.ts` file
+2. Click **New repository secret**
+3. Add secret:
+   - **Name**: `FUNCTIONS_CREDENTIALS`
+   - **Value**: Paste the entire file contents
+
+**Example `credentials.ts` format:**
+```typescript
+export const stravaClientSecret = "your-secret-here";
+export const firebaseServiceAccount = { /* ... */ };
+```
+
+**Important:** The workflow will create this file dynamically during builds, so it never gets committed to git.
 
 ### 3. Verify Workflow Files
 

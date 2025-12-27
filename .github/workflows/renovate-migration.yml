@@ -3,9 +3,6 @@ name: Renovate Migration Automation
 on:
   pull_request:
     types: [labeled, opened, synchronize]
-  push:
-    branches:
-      - 'renovate/**'
   workflow_dispatch:  # Allows manual triggering for testing
 
 permissions:
@@ -92,18 +89,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - name: Install frontend dependencies
-        run: npm ci
+      - name: Create credentials file for functions build
+        run: |
+          if [ -n "$FUNCTIONS_CREDENTIALS" ]; then
+            echo "$FUNCTIONS_CREDENTIALS" > functions/src/credentials.ts
+            echo "✓ Created functions/src/credentials.ts from secret"
+          else
+            echo "⚠ FUNCTIONS_CREDENTIALS secret not set - functions build may fail"
+          fi
+        env:
+          FUNCTIONS_CREDENTIALS: ${{ secrets.FUNCTIONS_CREDENTIALS }}
 
-      - name: Install functions dependencies
-        run: cd functions && npm ci
-
-      - name: Build and capture errors
+      - name: Install dependencies and build
         id: build
         continue-on-error: true
         run: |
           chmod +x .github/scripts/capture-errors.sh
-          ./.github/scripts/capture-errors.sh || true
+          ./.github/scripts/capture-errors.sh
+          echo "Script completed with exit code: $?"
 
       - name: Upload error logs
         if: steps.build.outputs.has_errors == 'true'
@@ -111,6 +114,8 @@ jobs:
         with:
           name: error-logs
           path: |
+            install-errors.log
+            functions-install-errors.log
             build-errors.log
             test-errors.log
             functions-errors.log
@@ -142,10 +147,16 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Create credentials file for functions build
         run: |
-          npm ci
-          cd functions && npm ci
+          if [ -n "$FUNCTIONS_CREDENTIALS" ]; then
+            echo "$FUNCTIONS_CREDENTIALS" > functions/src/credentials.ts
+            echo "✓ Created functions/src/credentials.ts from secret"
+          else
+            echo "⚠ FUNCTIONS_CREDENTIALS secret not set - functions build may fail"
+          fi
+        env:
+          FUNCTIONS_CREDENTIALS: ${{ secrets.FUNCTIONS_CREDENTIALS }}
 
       - name: Download error logs
         uses: actions/download-artifact@v4
@@ -188,6 +199,17 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+
+      - name: Create credentials file for functions build
+        run: |
+          if [ -n "$FUNCTIONS_CREDENTIALS" ]; then
+            echo "$FUNCTIONS_CREDENTIALS" > functions/src/credentials.ts
+            echo "✓ Created functions/src/credentials.ts from secret"
+          else
+            echo "⚠ FUNCTIONS_CREDENTIALS secret not set - functions build may fail"
+          fi
+        env:
+          FUNCTIONS_CREDENTIALS: ${{ secrets.FUNCTIONS_CREDENTIALS }}
 
       - name: Install dependencies
         run: |

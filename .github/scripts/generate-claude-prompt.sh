@@ -9,11 +9,22 @@ This is a Renovate PR: $PACKAGE_INFO
 
 Build and test errors have occurred. Please fix the breaking changes to make the code compatible with the new package version.
 
-=== FRONTEND ERRORS (npm run build + test) ===
-$(cat build-errors.log test-errors.log 2>/dev/null || echo "No frontend errors")
+=== INSTALLATION ERRORS ===
+Frontend install (npm ci):
+$(cat install-errors.log 2>/dev/null || echo "No frontend installation errors")
 
-=== FUNCTIONS ERRORS (npm run build) ===
-$(cat functions-errors.log 2>/dev/null || echo "No functions errors")
+Functions install (cd functions && npm ci):
+$(cat functions-install-errors.log 2>/dev/null || echo "No functions installation errors")
+
+=== BUILD ERRORS ===
+Frontend build (npm run build):
+$(cat build-errors.log 2>/dev/null || echo "No frontend build errors")
+
+Frontend tests (npm test):
+$(cat test-errors.log 2>/dev/null || echo "No frontend test errors")
+
+Functions build (cd functions && npm run build):
+$(cat functions-errors.log 2>/dev/null || echo "No functions build errors")
 
 === PROJECT STACK ===
 Frontend: React 18.3.1, TypeScript 5.8.3 (strict: false), React Query v4.36.1, Material-UI v5.14.14
