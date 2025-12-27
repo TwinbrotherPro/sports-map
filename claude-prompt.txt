@@ -1,0 +1,74 @@
+This is a Renovate PR: 
+
+Build and test errors have occurred. Please fix the breaking changes to make the code compatible with the new package version.
+
+=== INSTALLATION ERRORS ===
+Frontend install (npm ci):
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: my-app@0.1.0
+npm error Found: react@18.3.1
+npm error node_modules/react
+npm error   react@"18.3.1" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer react@"^19.0.0" from react-leaflet@5.0.0
+npm error node_modules/react-leaflet
+npm error   react-leaflet@"5.0.0" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry
+npm error this command with --force or --legacy-peer-deps
+npm error to accept an incorrect (and potentially broken) dependency resolution.
+npm error
+npm error
+npm error For a full report see:
+npm error /home/runner/.npm/_logs/2025-12-27T18_19_58_300Z-eresolve-report.txt
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-12-27T18_19_58_300Z-debug-0.log
+
+Functions install (cd functions && npm ci):
+
+added 707 packages, and audited 708 packages in 5s
+
+133 packages are looking for funding
+  run `npm fund` for details
+
+18 vulnerabilities (2 low, 6 moderate, 5 high, 5 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+=== BUILD ERRORS ===
+Frontend build (npm run build):
+Installation failed - skipping build
+
+Frontend tests (npm test):
+Installation failed - skipping tests
+
+Functions build (cd functions && npm run build):
+
+> build
+> tsc
+
+=== PROJECT STACK ===
+Frontend: React 18.3.1, TypeScript 5.8.3 (strict: false), React Query v4.36.1, Material-UI v5.14.14
+Backend: Express v5.1.0, Firebase Functions v6.1.1, Axios v1.12.0
+Package Manager: npm (both frontend and functions)
+
+=== INSTRUCTIONS ===
+1. Analyze the error logs above
+2. Identify the breaking changes in the updated package
+3. Fix the code to work with the new version
+4. Run "npm run build" (frontend) and "cd functions && npm run build" (backend) to verify fixes
+5. If builds succeed, commit the changes
+
+Focus on:
+- Import path changes
+- API signature updates
+- Type compatibility issues
+- Deprecated method replacements
