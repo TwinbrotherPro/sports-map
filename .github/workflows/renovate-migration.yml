@@ -3,7 +3,7 @@ name: Renovate Migration Automation
 on:
   pull_request:
     types: [labeled, opened, synchronize]
-  workflow_dispatch:  # Allows manual triggering for testing
+  workflow_dispatch: # Allows manual triggering for testing
 
 permissions:
   contents: write
@@ -36,7 +36,15 @@ jobs:
       - name: Check if workflow should run
         id: check
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
+          # For pull_request events, use head_ref (source branch name)
+          # For other events, use ref_name
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH_NAME="${{ github.head_ref }}"
+          else
+            BRANCH_NAME="${{ github.ref_name }}"
+          fi
+
+          echo "Checking branch: $BRANCH_NAME"
 
           # Check if branch starts with renovate/
           if [[ ! "$BRANCH_NAME" =~ ^renovate/ ]]; then
@@ -75,8 +83,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -144,8 +152,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Create credentials file for functions build
         run: |
@@ -176,13 +184,41 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Run Claude Code to fix errors
+        id: claude
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
             $(cat claude-prompt.txt)
-          claude_args: '--max-turns 10 --model claude-sonnet-4-5-20250929'
+          claude_args: "--permission-mode bypassPermissions --max-turns 15 --model claude-sonnet-4-5-20250929"
+          show_full_output: true
+
+      - name: Commit any uncommitted changes
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "Found uncommitted changes from Claude Code Action"
+            git add -A
+            git commit -m "WIP: Partial migration fixes (Claude Code Action may have reached turn limit)
+
+            Claude Code Action stopped but left uncommitted changes.
+            This commit captures the work in progress.
+
+            🤖 Generated with Claude Code Action
+
+            Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
+            # Push to the PR's head branch (the renovate/* branch)
+            git push origin HEAD:${{ github.head_ref }}
+            echo "✅ Committed and pushed work in progress to ${{ github.head_ref }}"
+          else
+            echo "No uncommitted changes found"
+          fi
 
   verify-build:
     needs: [check-conditions, claude-fix]
@@ -197,8 +233,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Create credentials file for functions build
         run: |
