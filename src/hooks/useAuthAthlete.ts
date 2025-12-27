@@ -15,22 +15,20 @@ export function useAuthAthlete() {
     setSearchParams({});
   }
 
-  const { data, status } = useQuery(
-    ["stravaAuth"],
-    async () => {
+  const { data, status } = useQuery({
+    queryKey: ["stravaAuth"],
+    queryFn: async () => {
       const response = await fetch(getConfig().stravaAuth(authCode), {
         method: "POST",
       });
       return response.json();
     },
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
-      enabled: !!authCode, // Implement one-time fetch if Strava Quota exceeds
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
+    enabled: !!authCode, // Implement one-time fetch if Strava Quota exceeds
+  });
 
   console.log("data", data);
   const accessToken = data?.access_token;

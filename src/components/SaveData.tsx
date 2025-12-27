@@ -42,8 +42,8 @@ export function SaveData() {
 
   // TODO gray out until data is loaded
   if (
-    athleteStatus === "loading" ||
-    activityStatus === "loading"
+    athleteStatus === "pending" ||
+    activityStatus === "pending"
   ) {
     return <CircularProgress size={10} />;
   }

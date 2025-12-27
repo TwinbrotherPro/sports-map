@@ -180,8 +180,8 @@ export function ActivityOverlay({
   };
   setCurrentActivityIndex;
 }) {
-  const { accessToken, status } = useAuthAthlete();
-  const { detailedActivity, activityStatus, error } = useGetDetailedActivity(
+  const { accessToken } = useAuthAthlete();
+  const { detailedActivity } = useGetDetailedActivity(
     activity.id,
     accessToken
   );
