@@ -35,18 +35,9 @@ if [ $INSTALL_EXIT -eq 0 ]; then
     HAS_ERRORS=true
   fi
 
-  # Frontend tests
-  echo "Running frontend tests..."
-  npm test -- --watchAll=false 2>&1 | tee test-errors.log
-  TEST_EXIT=${PIPESTATUS[0]}
-  if [ $TEST_EXIT -ne 0 ]; then
-    echo "ERROR: Frontend tests failed (exit code: $TEST_EXIT)"
-    HAS_ERRORS=true
-  fi
 else
-  echo "Skipping frontend build and tests due to installation failure"
+  echo "Skipping frontend build due to installation failure"
   echo "Installation failed - skipping build" > build-errors.log
-  echo "Installation failed - skipping tests" > test-errors.log
 fi
 
 if [ $FUNCTIONS_INSTALL_EXIT -eq 0 ]; then

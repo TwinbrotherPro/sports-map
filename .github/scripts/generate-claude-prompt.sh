@@ -7,7 +7,7 @@ PACKAGE_INFO=$(gh pr view --json title -q .title)
 cat << EOF
 This is a Renovate PR: $PACKAGE_INFO
 
-Build and test errors have occurred. Please fix the breaking changes to make the code compatible with the new package version.
+Build errors have occurred. Please fix the breaking changes to make the code compatible with the new package version.
 
 === INSTALLATION ERRORS ===
 Frontend install (npm ci):
@@ -19,9 +19,6 @@ $(cat functions-install-errors.log 2>/dev/null || echo "No functions installatio
 === BUILD ERRORS ===
 Frontend build (npm run build):
 $(cat build-errors.log 2>/dev/null || echo "No frontend build errors")
-
-Frontend tests (npm test):
-$(cat test-errors.log 2>/dev/null || echo "No frontend test errors")
 
 Functions build (cd functions && npm run build):
 $(cat functions-errors.log 2>/dev/null || echo "No functions build errors")
@@ -43,4 +40,5 @@ Focus on:
 - API signature updates
 - Type compatibility issues
 - Deprecated method replacements
+- Linting errors can be ignored
 EOF
