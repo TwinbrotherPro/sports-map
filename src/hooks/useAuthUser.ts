@@ -18,9 +18,9 @@ const firebaseConfig: FirebaseOptions = {
 export const fireBaseApp = initializeApp(firebaseConfig);
 
 export function useAuthUser(stravaToken?: string) {
-  const { data, status } = useQuery(
-    ["userAuth"],
-    async () => {
+  const { data, status } = useQuery({
+    queryKey: ["userAuth"],
+    queryFn: async () => {
       const endpoint = getConfig().tokenExchange;
       const request: RequestInfo = new Request(new URL(endpoint), {
         method: "GET",
@@ -31,14 +31,12 @@ export function useAuthUser(stravaToken?: string) {
       const body = await response.json();
       return body.customToken;
     },
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
-      enabled: !!stravaToken,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
+    enabled: !!stravaToken,
+  });
 
   return { userToken: data, status };
 }

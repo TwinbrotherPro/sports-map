@@ -16,7 +16,7 @@ export function useActivities(accessToken: string) {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["activities"],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }) => {
       const today = await import("moment").then((moment) =>
         moment.default().unix()
       );
@@ -32,6 +32,7 @@ export function useActivities(accessToken: string) {
 
       return response.json();
     },
+    initialPageParam: 1,
     getNextPageParam: (lastPage, pages) => {
       // If the last page has 100 items, there might be more pages
       return lastPage.length === 100 ? pages.length + 1 : undefined;
