@@ -5,7 +5,7 @@
   "packageRules": [
     {
       "matchPackageNames": ["node", "@types/node"],
-      "allowedVersions": "/^16\\..*/"
+      "allowedVersions": "/^22\\..*/"
     }
   ]
 }
