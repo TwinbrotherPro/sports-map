@@ -34,6 +34,9 @@ npm run logs        # View function logs
 
 ## Architecture
 
+### PWA Configuration
+The app is configured as a Progressive Web App with `"display": "minimal-ui"` in the manifest.json. This display mode was chosen over `"standalone"` to ensure OAuth redirects work correctly within the PWA context on mobile devices. The minimal-ui mode shows a minimal browser UI (address bar) which prevents external OAuth redirects from opening in a separate in-app browser window, maintaining the authentication flow integrity.
+
 ### Authentication Flow
 1. User clicks "Connect with Strava" button, redirected to Strava OAuth
 2. Strava redirects back with `code` query parameter
