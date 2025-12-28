@@ -177,10 +177,14 @@ jobs:
           chmod +x .github/scripts/generate-claude-prompt.sh
           PROMPT=$(./.github/scripts/generate-claude-prompt.sh)
 
-          # Save prompt to file for Claude Code Action
-          echo "$PROMPT" > claude-prompt.txt
-          echo "$PROMPT"
-          echo "Prompt generated and saved to claude-prompt.txt"
+          # Save to GITHUB_OUTPUT for next step
+          {
+            echo 'claude_prompt<<EOF'
+            echo "$PROMPT"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+          echo "Prompt generated and saved to output"
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -191,8 +195,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          prompt: |
-            $(cat claude-prompt.txt)
+          prompt: ${{ steps.prompt.outputs.claude_prompt }}
           claude_args: "--permission-mode bypassPermissions --max-turns 30 --model claude-sonnet-4-5-20250929"
           show_full_output: true
 
