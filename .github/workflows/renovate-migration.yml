@@ -179,6 +179,7 @@ jobs:
 
           # Save prompt to file for Claude Code Action
           echo "$PROMPT" > claude-prompt.txt
+          echo "$PROMPT"
           echo "Prompt generated and saved to claude-prompt.txt"
         env:
           GH_TOKEN: ${{ github.token }}
