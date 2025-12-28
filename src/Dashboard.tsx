@@ -188,6 +188,13 @@ function Dashboard({
         zoomControl={false}
         // Load unprefixed css class
         className="mapid"
+        worldCopyJump={false}
+        maxBoundsViscosity={1.0}
+        maxBounds={[
+          [-90, -180],
+          [90, 180],
+        ]}
+        minZoom={2}
       >
         <LocationCircle />
         <TileLayer
