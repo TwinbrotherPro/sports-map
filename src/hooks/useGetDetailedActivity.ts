@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { DetailedActivity } from '../model/ActivityModel';
 
 export function useGetDetailedActivity(id: string, accessToken: string) {
   const {
     data: detailedActivity,
     status: activityStatus,
     error,
-  } = useQuery({
+  } = useQuery<DetailedActivity>({
     queryKey: [`detailedActivity${id}`],
     queryFn: async () => {
       const response = await fetch(

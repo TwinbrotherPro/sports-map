@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useGetDetailedActivity } from "../hooks/useGetDetailedActivity";
 import { ActivitySymbol } from "./ActivitySymbol";
+import { DeviceLabel } from "./DeviceLabel";
 import { getGPXFile } from "../utils/gpx";
 
 const PREFIX = "ActivityOverlay";
@@ -181,10 +182,7 @@ export function ActivityOverlay({
   setCurrentActivityIndex;
 }) {
   const { accessToken } = useAuthAthlete();
-  const { detailedActivity } = useGetDetailedActivity(
-    activity.id,
-    accessToken
-  );
+  const { detailedActivity } = useGetDetailedActivity(activity.id, accessToken);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleClose = () => setModalIsOpen(false);
@@ -249,6 +247,11 @@ export function ActivityOverlay({
             </div>
           )}
           {detailedActivity && <div>{detailedActivity.description}</div>}
+          {detailedActivity?.device_name && (
+            <div>
+              Device: <DeviceLabel deviceName={detailedActivity.device_name} />
+            </div>
+          )}
         </div>
         {detailedActivity && detailedActivity.photos.count > 0 && (
           <div

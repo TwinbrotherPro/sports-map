@@ -13,3 +13,20 @@ export type Activity = {
   start_date: Date;
   type: string;
 };
+
+export type DetailedActivity = {
+  device_name?: string;
+  total_elevation_gain?: number;
+  description?: string;
+  map?: {
+    polyline: string;
+  };
+  photos?: {
+    count: number;
+    primary?: {
+      urls: {
+        [key: string]: string;
+      };
+    };
+  };
+};
