@@ -43,7 +43,7 @@
     "@testing-library/user-event": "14.6.1",
     "@types/jest": "30.0.0",
     "@types/leaflet": "1.9.21",
-    "@types/node": "22.19.3",
+    "@types/node": "22.19.5",
     "@types/polyline": "0.1.32",
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3"
