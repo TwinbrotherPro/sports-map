@@ -1,80 +1,26 @@
-import { CircularProgress, Fade } from "@mui/material";
+import { Fade } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { MainPane } from "./components/MainPane";
-import getConfig from "./config/config";
 import Dashboard from "./Dashboard";
-import { useAuthAthlete } from "./hooks/useAuthAthlete";
-import { ReactComponent as ConnectButton } from "./misc/btn_strava_connectwith_orange.svg";
-import { useActivities } from "./hooks/useActivities";
+import { AuthenticatedPage } from "./components/AuthenticatedPage";
 
-const PREFIX = "AddActivityButton";
-
-const classes = {
-  donate: `${PREFIX}-donate`,
-};
-
-const StyledFade = styled(Fade)({
-  [`& .${classes.donate}`]: {
-    marginLeft: " auto",
-    marginRight: " auto",
-    width: "193px",
-    height: "48px",
-  },
-});
+const StyledFade = styled(Fade)({});
 
 function AddActivityButton() {
-  const config = getConfig();
-
-  const { accessToken, athlete, status } = useAuthAthlete();
-
-  const { activities, activityStatus, error, nextPage, hasNextPage, isFetchingNextPage } = useActivities(accessToken);
-
-  if (!accessToken) {
-    return (
-      <MainPane>
-        <p>
-          Shows your activities of the last year on a global map visualisation.
-        </p>
-        <a href={config.stravaLink}>
-          <ConnectButton className={classes.donate} />
-        </a>
-      </MainPane>
-    );
-  }
-
-  if (
-    activityStatus === "pending" ||
-    status === "pending"
-  ) {
-    return (
-      <MainPane>
-        <CircularProgress />
-      </MainPane>
-    );
-  }
-
-  if (activityStatus === "error" || status === "error") {
-    return (
-      <MainPane>
-        <span>Error: {(error as any).message}</span>
-      </MainPane>
-    );
-  }
-
-  if (activities) {
-    return (
-      <StyledFade timeout={100000}>
-        <Dashboard
-          activities={activities}
-          athlete={athlete}
-          setNextPage={nextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage} />
-      </StyledFade>
-    );
-  }
-
-  return null;
+  return (
+    <AuthenticatedPage description="Shows your activities of the last year on a global map visualisation.">
+      {({ activities, athlete, nextPage, hasNextPage, isFetchingNextPage }) => (
+        <StyledFade timeout={100000}>
+          <Dashboard
+            activities={activities}
+            athlete={athlete}
+            setNextPage={nextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
+        </StyledFade>
+      )}
+    </AuthenticatedPage>
+  );
 }
 
 export default AddActivityButton;

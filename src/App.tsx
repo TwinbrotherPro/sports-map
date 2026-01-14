@@ -9,11 +9,13 @@ import GithubIcon from "@mui/icons-material/GitHub";
 import InfoIcon from "@mui/icons-material/Info";
 import LoyalityIcon from "@mui/icons-material/Loyalty";
 import SettingsBackupRestoreIcon from "@mui/icons-material/SettingsBackupRestore";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { lazy, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { Credits } from "./credits/Credits";
+import { Accomplishments } from "./pages/Accomplishments";
 import compatibleWithStrava from "./misc/api_logo_cptblWith_strava_horiz_gray.svg"; // FIX tsc error?
 
 const PREFIX = "App";
@@ -44,7 +46,7 @@ const queryClient = new QueryClient();
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
 
-const bottomNavigationList = ["/", "/about", "/github", "/credits"];
+const bottomNavigationList = ["/", "/accomplishments", "/about", "/github", "/credits"];
 
 function App() {
   const navigate = useNavigate();
@@ -79,6 +81,7 @@ function App() {
                 </Suspense>
               }
             />
+            <Route path="/accomplishments" element={<Accomplishments />} />
             <Route path="/credits" element={<Credits />} />
           </Routes>
           <BottomNavigation
@@ -92,17 +95,21 @@ function App() {
                   navigate("/");
                   break;
                 case 1:
+                  setNavigationValue(newValue);
+                  navigate("/accomplishments");
+                  break;
+                case 2:
                   setNavigationValue(-1);
                   window.open("https://philippkraus.me", "_blank");
                   break;
-                case 2:
+                case 3:
                   setNavigationValue(-1);
                   window.open(
                     "https://github.com/TwinbrotherPro/sports-map",
                     "_blank"
                   );
                   break;
-                case 3:
+                case 4:
                   setNavigationValue(newValue);
                   navigate("/credits");
                   break;
@@ -113,6 +120,7 @@ function App() {
               label="Home"
               icon={<SettingsBackupRestoreIcon />}
             />
+            <BottomNavigationAction label="Stats" icon={<EmojiEventsIcon />} />
             <BottomNavigationAction label="About" icon={<InfoIcon />} />
             <BottomNavigationAction label="Code" icon={<GithubIcon />} />
             <BottomNavigationAction label="Credits" icon={<LoyalityIcon />} />

@@ -8,6 +8,8 @@ import {
   Polyline,
   TileLayer,
   useMap,
+  GeoJSON,
+  GeoJSONProps,
 } from "react-leaflet";
 import { ActivityOverlay } from "./components/ActivityOverlay";
 import { LocationCircle } from "./components/LocationCircle";
@@ -167,6 +169,13 @@ function Dashboard({
 
   console.log(activities);
 
+  const geo: GeoJSONProps = {
+    data: {
+      type: "Feature",
+      bbox: [-10.0, -10.0, 10.0, 10.0],
+    },
+  };
+
   return (
     <Root>
       {currentActivity && (
@@ -196,6 +205,7 @@ function Dashboard({
         ]}
         minZoom={2}
       >
+        <GeoJSON data={geo.data} />
         <LocationCircle />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
