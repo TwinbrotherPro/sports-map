@@ -11,7 +11,6 @@ import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useDraggablePosition } from "../hooks/useDraggablePosition";
-import { SaveData } from "./SaveData";
 import { useState } from "react";
 
 const ControlContainer = styled("div")<{ isMinimized?: boolean }>(
@@ -174,7 +173,6 @@ export function ControlMenu({
   useAuthAthlete();
   const [position, error] = useGeoLocation(false);
 
-  const [isSaveDataVisible, setSaveDataIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
   // Draggable position hook
@@ -184,10 +182,6 @@ export function ControlMenu({
     handlers,
     containerRef,
   } = useDraggablePosition({ x: 10, y: 10 });
-
-  const onClickSaveData = () => {
-    setSaveDataIsVisible(!isSaveDataVisible);
-  };
 
   const onClickBack = () => {
     map.flyToBounds(outerBounds, { animate: true, duration: 1.5 });
@@ -306,23 +300,8 @@ export function ControlMenu({
                 </ControlButton>
               </ControlButtonGroup>
             )}
-
-            {false && (
-              <ControlButtonGroup>
-                <ControlButton
-                  size="small"
-                  variant="contained"
-                  fullWidth
-                  onClick={onClickSaveData}
-                >
-                  Save Data
-                </ControlButton>
-              </ControlButtonGroup>
-            )}
           </>
         )}
-
-        {isSaveDataVisible && <SaveData />}
       </ControlContainer>
     </ControlWrapper>
   );

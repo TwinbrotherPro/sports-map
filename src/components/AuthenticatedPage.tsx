@@ -42,6 +42,11 @@ export function AuthenticatedPage({
         <p>
           {description ||
             "Connect your Strava account to view your activities."}
+          <br />
+          <i>
+            Everything is client based, nothing is stored on a third party
+            server
+          </i>
         </p>
         <a href={config.stravaLink(path)}>
           <ConnectButton style={{ width: "193px", height: "48px" }} />
