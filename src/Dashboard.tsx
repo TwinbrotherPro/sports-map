@@ -78,6 +78,9 @@ function ActivityMaker({
     },
   };
 
+  const isGrouped = groupedActivityIds.has(activity.id);
+  const isSelected = currentActivityIndex === activityIndex;
+
   if (!activity.map.summary_polyline) {
     return null;
   }
@@ -104,9 +107,6 @@ function ActivityMaker({
     shadowSize: [41, 41],
   });
 
-  const isGrouped = groupedActivityIds.has(activity.id);
-  const isSelected = currentActivityIndex === activityIndex;
-
   // Create purple icon for grouped activities
   const purpleIcon = new leaflet.Icon({
     iconUrl:
@@ -118,6 +118,33 @@ function ActivityMaker({
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
+
+  // Create numbered icon for grouped activities with sequence numbers
+  let numberedIcon = null;
+  if (isGrouped && sequenceNumber) {
+    numberedIcon = new leaflet.DivIcon({
+      html: `
+        <div class="numbered-marker">
+          <div class="marker-pin"></div>
+          <span class="marker-number">${sequenceNumber}</span>
+        </div>
+      `,
+      className: 'numbered-marker-container',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+  }
+
+  // Icon selection priority (highest to lowest):
+  // 1. Grouped + Has Sequence Number → DivIcon with number (purple marker + white number)
+  // 2. Grouped + No Sequence → Purple icon (fallback if sequence calc fails)
+  // 3. Currently Selected (not grouped) → Red icon (normal selection behavior)
+  // 4. Default → Orange icon (normal unselected state)
+  const iconToUse =
+    (isGrouped && sequenceNumber && numberedIcon) ? numberedIcon      // Priority 1: Grouped + numbered
+    : isGrouped ? purpleIcon                          // Priority 2: Grouped (no number)
+    : isSelected ? darkerOrangeIcon  // Priority 3: Currently selected
+    : orangeIcon;                                     // Priority 4: Default
 
   return (
     <Fragment key={activity.id}>
@@ -138,7 +165,7 @@ function ActivityMaker({
         <Marker
           position={activity.start_latlng}
           eventHandlers={onClickHandler}
-          icon={isGrouped ? purpleIcon : isSelected ? darkerOrangeIcon : orangeIcon}
+          icon={iconToUse}
         ></Marker>
       )}
     </Fragment>

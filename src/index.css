@@ -17,3 +17,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* Numbered marker styles for grouped activities */
+.numbered-marker {
+  position: relative;
+  width: 25px;
+  height: 41px;
+}
+
+.marker-pin {
+  width: 25px;
+  height: 41px;
+  background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png');
+  background-size: 25px 41px;
+}
+
+.marker-number {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 0 3px rgba(0,0,0,0.8);
+  z-index: 1000;
+  pointer-events: none;  /* Let clicks pass through to marker */
+}
+
+.numbered-marker-container {
+  background: transparent !important;
+  border: none !important;
+}
