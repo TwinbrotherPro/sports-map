@@ -1,11 +1,13 @@
-import { IconButton } from "@mui/material";
+import { IconButton, Button, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
+import { Download as DownloadIcon } from "@mui/icons-material";
 import moment from "moment";
 import { useQueries } from "@tanstack/react-query";
 import { Activity } from "../model/ActivityModel";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
+import { useState } from "react";
 
 const PREFIX = "GroupedActivityOverlay";
 
@@ -32,8 +34,8 @@ const CloseButton = styled(IconButton)({
 
 const Footer = styled("div")(() => ({
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "baseline",
+  justifyContent: "center",
+  alignItems: "center",
   marginTop: "15px",
 }));
 
@@ -114,6 +116,13 @@ export function GroupedActivityOverlay({
   onClose: () => void;
 }) {
   const { accessToken } = useAuthAthlete();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportImage = () => {
+    console.log("Export will be implemented in Part 2");
+    // Actual export logic in Part 2
+  };
 
   // Fetch detailed activities using useQueries
   const detailedActivitiesQueries = useQueries({
@@ -197,7 +206,16 @@ export function GroupedActivityOverlay({
         </div>
       </div>
       <Footer>
-        <span></span>
+        <Button
+          variant="contained"
+          startIcon={isExporting ? <CircularProgress size={16} /> : <DownloadIcon />}
+          onClick={handleExportImage}
+          disabled={isExporting}
+          size="small"
+          sx={{ mt: 2 }}
+        >
+          {isExporting ? "Exporting..." : "Download Image"}
+        </Button>
       </Footer>
     </Root>
   );
