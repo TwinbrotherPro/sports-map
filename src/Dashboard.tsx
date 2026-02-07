@@ -298,6 +298,8 @@ function Dashboard({
           setIsHeatMapEnabled={setIsHeatMapEnabled}
           isGroupActivitiesMode={isGroupActivitiesMode}
           setIsGroupActivitiesMode={setIsGroupActivitiesMode}
+          groupedActivityIds={groupedActivityIds}
+          clearGroupedActivities={clearGroupedActivities}
           loadPreviousYear={loadPreviousYear}
           hasMoreYears={hasMoreYears}
           isFetchingYear={isFetchingYear}

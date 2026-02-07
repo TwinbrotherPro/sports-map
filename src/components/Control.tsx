@@ -7,6 +7,7 @@ import MapIcon from "@mui/icons-material/Map";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ClearIcon from "@mui/icons-material/Clear";
 import * as L from "leaflet";
 import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
@@ -24,6 +25,8 @@ interface ControlMenuProps {
   setIsHeatMapEnabled: (enabled: boolean) => void;
   isGroupActivitiesMode: boolean;
   setIsGroupActivitiesMode: (mode: boolean) => void;
+  groupedActivityIds: Set<string>;
+  clearGroupedActivities: () => void;
   loadPreviousYear: () => void;
   hasMoreYears: boolean;
   isFetchingYear: boolean;
@@ -184,6 +187,8 @@ export function ControlMenu({
   setIsHeatMapEnabled,
   isGroupActivitiesMode,
   setIsGroupActivitiesMode,
+  groupedActivityIds,
+  clearGroupedActivities,
   loadPreviousYear,
   hasMoreYears,
   isFetchingYear,
@@ -315,6 +320,36 @@ export function ControlMenu({
               >
                 {isGroupActivitiesMode ? "Exit Group Mode" : "Group Activities"}
               </ControlButton>
+            </ControlButtonGroup>
+
+            <ControlButtonGroup>
+              <GroupLabel>Activity Group</GroupLabel>
+              {groupedActivityIds.size > 0 && (
+                <>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "14px",
+                      color: "#9333EA",
+                      marginBottom: "6px",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {groupedActivityIds.size}{" "}
+                    {groupedActivityIds.size === 1 ? "activity" : "activities"}{" "}
+                    grouped
+                  </div>
+                  <ControlButton
+                    variant="contained"
+                    size="small"
+                    fullWidth
+                    onClick={clearGroupedActivities}
+                    startIcon={<ClearIcon />}
+                  >
+                    Clear Group
+                  </ControlButton>
+                </>
+              )}
             </ControlButtonGroup>
 
             <ControlButtonGroup>
