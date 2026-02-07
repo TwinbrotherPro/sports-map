@@ -4,7 +4,6 @@ import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import PlaceIcon from "@mui/icons-material/Place";
 import MapIcon from "@mui/icons-material/Map";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useMap } from "react-leaflet";
@@ -12,6 +11,7 @@ import { useGeoLocation } from "../hooks/useGeoLocation";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useDraggablePosition } from "../hooks/useDraggablePosition";
 import { useState } from "react";
+import { YearSelector } from "./YearSelector";
 
 const ControlContainer = styled("div")<{ isMinimized?: boolean }>(
   ({ isMinimized }) => ({
@@ -165,9 +165,10 @@ export function ControlMenu({
   setIsMarkersDisabled,
   isHeatMapEnabled,
   setIsHeatMapEnabled,
-  setNextPage,
-  hasNextPage,
-  isFetchingNextPage,
+  loadPreviousYear,
+  hasMoreYears,
+  isFetchingYear,
+  loadedYears,
 }) {
   const map = useMap();
   useAuthAthlete();
@@ -285,21 +286,16 @@ export function ControlMenu({
               </ControlButton>
             </ControlButtonGroup>
 
-            {hasNextPage && (
-              <ControlButtonGroup>
-                <GroupLabel>Data</GroupLabel>
-                <ControlButton
-                  size="small"
-                  variant="contained"
-                  fullWidth
-                  onClick={() => setNextPage()}
-                  disabled={isFetchingNextPage}
-                  startIcon={<NavigateNextIcon />}
-                >
-                  {isFetchingNextPage ? "Loading..." : "Next Page"}
-                </ControlButton>
-              </ControlButtonGroup>
-            )}
+            <ControlButtonGroup>
+              <GroupLabel>Years Loaded</GroupLabel>
+              <YearSelector
+                loadedYears={loadedYears}
+                onLoadPreviousYear={loadPreviousYear}
+                hasMoreYears={hasMoreYears}
+                isFetchingYear={isFetchingYear}
+                compact={true}
+              />
+            </ControlButtonGroup>
           </>
         )}
       </ControlContainer>

@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress } from "@mui/material";
+import { Alert } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
 import { useMemo } from "react";
@@ -6,6 +6,7 @@ import { StatCard } from "../components/StatCard";
 import { CountriesProgressCard } from "../components/CountriesProgressCard";
 import { AuthenticatedPage } from "../components/AuthenticatedPage";
 import { ActivitySymbol } from "../components/ActivitySymbol";
+import { YearSelector } from "../components/YearSelector";
 import { useCountriesData } from "../hooks/useCountriesData";
 import { useVisitedCountries } from "../hooks/useVisitedCountries";
 
@@ -114,35 +115,27 @@ const ActivityTypeStats = styled("div")({
   color: "#666",
 });
 
-const LoadMoreButton = styled(Button)({
-  backgroundColor: "#FC4C02",
-  color: "white",
-  padding: "12px 32px",
-  fontSize: "14px",
-  fontWeight: 400,
-  margin: "24px auto",
-  display: "block",
-
-  "&:hover": {
-    backgroundColor: "#ca3e02",
-  },
-
-  "&:disabled": {
-    backgroundColor: "#ccc",
-  },
+const YearSelectorSection = styled("div")({
+  marginTop: "32px",
+  padding: "20px",
+  backgroundColor: "white",
+  borderRadius: "12px",
+  boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
 });
 
 // Inner component to use hooks properly
 function AccomplishmentsContent({
   activities,
-  nextPage,
-  hasNextPage,
-  isFetchingNextPage,
+  loadPreviousYear,
+  hasMoreYears,
+  isFetchingYear,
+  loadedYears,
 }: {
   activities: any[];
-  nextPage: () => void;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
+  loadPreviousYear: () => void;
+  hasMoreYears: boolean;
+  isFetchingYear: boolean;
+  loadedYears: number[];
 }) {
   // Countries calculation
   const countriesData = useCountriesData();
@@ -251,10 +244,10 @@ function AccomplishmentsContent({
                 </DateRange>
               </PageHeader>
 
-              {hasNextPage && (
-                <Alert severity="warning" sx={{ marginBottom: "24px" }}>
-                  Showing stats for {totalActivities} activities. Load more for
-                  a complete overview.
+              {hasMoreYears && (
+                <Alert severity="info" sx={{ marginBottom: "24px" }}>
+                  Showing stats for {loadedYears.join(", ")} ({totalActivities} activities).
+                  Load earlier years for a complete overview.
                 </Alert>
               )}
 
@@ -319,25 +312,15 @@ function AccomplishmentsContent({
                 })}
               </ActivityTypeList>
 
-              {hasNextPage && (
-                <LoadMoreButton
-                  onClick={() => nextPage()}
-                  disabled={isFetchingNextPage}
-                  //endIcon={isFetchingNextPage ? null : <NavigateNextIcon />}
-                >
-                  {isFetchingNextPage ? (
-                    <>
-                      <CircularProgress
-                        size={20}
-                        sx={{ color: "white", marginRight: "8px" }}
-                      />
-                      Loading...
-                    </>
-                  ) : (
-                    "Load More Activities"
-                  )}
-                </LoadMoreButton>
-              )}
+              <SectionTitle>Data Coverage</SectionTitle>
+              <YearSelectorSection>
+                <YearSelector
+                  loadedYears={loadedYears}
+                  onLoadPreviousYear={loadPreviousYear}
+                  hasMoreYears={hasMoreYears}
+                  isFetchingYear={isFetchingYear}
+                />
+              </YearSelectorSection>
             </ContentWrapper>
           </PageContainer>
         );
@@ -349,12 +332,13 @@ export function Accomplishments() {
       description="View your accomplishments and activity statistics."
       path="accomplishments"
     >
-      {({ activities, nextPage, hasNextPage, isFetchingNextPage }) => (
+      {({ activities, loadPreviousYear, hasMoreYears, isFetchingYear, loadedYears }) => (
         <AccomplishmentsContent
           activities={activities}
-          nextPage={nextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
+          loadPreviousYear={loadPreviousYear}
+          hasMoreYears={hasMoreYears}
+          isFetchingYear={isFetchingYear}
+          loadedYears={loadedYears}
         />
       )}
     </AuthenticatedPage>

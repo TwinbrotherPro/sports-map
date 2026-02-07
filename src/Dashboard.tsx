@@ -109,15 +109,17 @@ function ActivityMaker({
 function Dashboard({
   activities,
   athlete,
-  setNextPage,
-  hasNextPage,
-  isFetchingNextPage,
+  loadPreviousYear,
+  hasMoreYears,
+  isFetchingYear,
+  loadedYears,
 }: {
   activities: Activity[];
   athlete: any;
-  setNextPage: () => void;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
+  loadPreviousYear: () => void;
+  hasMoreYears: boolean;
+  isFetchingYear: boolean;
+  loadedYears: number[];
 }) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState<
     string | null
@@ -212,9 +214,10 @@ function Dashboard({
           setIsMarkersDisabled={setIsMarkersDisabled}
           isHeatMapEnabled={isHeatMapEnabled}
           setIsHeatMapEnabled={setIsHeatMapEnabled}
-          setNextPage={setNextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
+          loadPreviousYear={loadPreviousYear}
+          hasMoreYears={hasMoreYears}
+          isFetchingYear={isFetchingYear}
+          loadedYears={loadedYears}
         />
       </MapContainer>
     </Root>
