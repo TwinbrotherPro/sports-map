@@ -14,6 +14,7 @@ import { LocationCircle } from "./components/LocationCircle";
 import { Profile } from "./components/Profile";
 import { ControlMenu } from "./components/Control";
 import { CountryHighlights } from "./components/CountryHighlights";
+import { GroupedActivitiesAutoZoom } from "./components/GroupedActivitiesAutoZoom";
 import { Activity } from "./model/ActivityModel";
 
 const PREFIX = "Dashboard";
@@ -284,6 +285,10 @@ function Dashboard({
         />
         {markers}
         <Profile athlete={athlete} />
+        <GroupedActivitiesAutoZoom
+          groupedActivityIds={groupedActivityIds}
+          activities={activities}
+        />
         <ControlMenu
           outerBounds={outerBounds}
           setCurrentActivityIndex={setCurrentActivityIndex}
