@@ -1,8 +1,8 @@
-import { IconButton, Button, CircularProgress } from "@mui/material";
+import { IconButton, Button, CircularProgress, Tooltip, Alert } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
-import { Download as DownloadIcon } from "@mui/icons-material";
+import { Download as DownloadIcon, Info as InfoIcon } from "@mui/icons-material";
 import moment from "moment";
 import { useQueries } from "@tanstack/react-query";
 import { Activity } from "../model/ActivityModel";
@@ -38,7 +38,15 @@ const Footer = styled("div")(() => ({
   justifyContent: "center",
   alignItems: "center",
   marginTop: "15px",
+  gap: "8px",
 }));
+
+const ErrorAlert = styled(Alert)({
+  marginTop: "12px",
+  fontSize: "0.85rem",
+  padding: "8px 12px",
+  wordBreak: "break-word",
+});
 
 const Root = styled("div")(() => ({
   [`&.${classes.overlay}`]: {
@@ -109,6 +117,49 @@ const Root = styled("div")(() => ({
   },
 }));
 
+type ExportErrorType = "MAP_CONTAINER_NOT_FOUND" | "BLOB_CREATION_FAILED" | "CORS" | "CANVAS" | "UNKNOWN" | null;
+
+const getErrorMessage = (errorType: ExportErrorType): string => {
+  const messages: Record<Exclude<ExportErrorType, null>, string> = {
+    CORS: `Unable to export due to map tile restrictions. Try these alternatives instead:
+• Mac: Cmd + Shift + 4
+• Windows/Linux: Win + Shift + S
+• Mobile: Use your device's screenshot button`,
+
+    MAP_CONTAINER_NOT_FOUND: "Export failed: Map container not found. Try refreshing the page.",
+
+    BLOB_CREATION_FAILED: "Export failed: Could not create image. Please use your browser's screenshot feature instead.",
+
+    CANVAS: `Export failed: Canvas rendering error. Try these alternatives:
+• Mac: Cmd + Shift + 4
+• Windows/Linux: Win + Shift + S
+• Mobile: Use your device's screenshot button`,
+
+    UNKNOWN: `Export failed. Please try using your browser's screenshot feature instead:
+• Mac: Cmd + Shift + 4
+• Windows/Linux: Win + Shift + S
+• Mobile: Use your device's screenshot button`,
+  };
+
+  return messages[errorType] || messages.UNKNOWN;
+};
+
+const getErrorSeverity = (errorType: ExportErrorType): "error" | "info" => {
+  return errorType === "CORS" ? "info" : "error";
+};
+
+const detectErrorType = (error: unknown): ExportErrorType => {
+  if (error instanceof Error) {
+    if (error.message.includes("CORS") || error.name === "SecurityError") {
+      return "CORS";
+    }
+    if (error.message.includes("canvas")) {
+      return "CANVAS";
+    }
+  }
+  return "UNKNOWN";
+};
+
 export function GroupedActivityOverlay({
   groupedActivities,
   onClose,
@@ -118,14 +169,16 @@ export function GroupedActivityOverlay({
 }) {
   const { accessToken } = useAuthAthlete();
   const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<ExportErrorType>(null);
 
   const handleExportImage = async () => {
     setIsExporting(true);
+    setExportError(null);
     try {
       const mapContainer = document.querySelector(".mapid");
       if (!mapContainer) {
         console.error("Map container not found");
-        alert("Unable to export: Map container not found");
+        setExportError("MAP_CONTAINER_NOT_FOUND");
         return;
       }
 
@@ -137,7 +190,7 @@ export function GroupedActivityOverlay({
 
       canvas.toBlob((blob) => {
         if (!blob) {
-          alert("Export failed: Could not create image");
+          setExportError("BLOB_CREATION_FAILED");
           return;
         }
         const url = URL.createObjectURL(blob);
@@ -149,11 +202,8 @@ export function GroupedActivityOverlay({
       }, "image/png");
     } catch (error) {
       console.error("Export failed:", error);
-
-      // Generic error message for now - Part B will improve this
-      alert(
-        "Export failed. Please try using your browser's screenshot feature instead."
-      );
+      const errorType = detectErrorType(error);
+      setExportError(errorType);
     } finally {
       setIsExporting(false);
     }
@@ -262,7 +312,18 @@ export function GroupedActivityOverlay({
         >
           {isExporting ? "Exporting..." : "Download Image"}
         </Button>
+        <Tooltip title="Download a screenshot of the grouped activities and map. Note: Some browsers may have CORS restrictions preventing export. Use your browser's built-in screenshot feature as a fallback.">
+          <InfoIcon
+            fontSize="small"
+            sx={{ color: "#9333EA", cursor: "help", opacity: 0.7 }}
+          />
+        </Tooltip>
       </Footer>
+      {exportError && (
+        <ErrorAlert severity={getErrorSeverity(exportError)} onClose={() => setExportError(null)}>
+          {getErrorMessage(exportError)}
+        </ErrorAlert>
+      )}
     </Root>
   );
 }
