@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import * as leaflet from "leaflet";
 import * as decoding from "polyline-encoded";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -45,6 +45,18 @@ function ActivityMaker({
   isGroupActivitiesMode,
   groupedActivityIds,
   toggleActivityInGroup,
+  sequenceNumber,
+}: {
+  activity: Activity;
+  activityIndex: string;
+  currentActivityIndex: string | null;
+  setCurrentActivityIndex: (id: string | null) => void;
+  isMarkersDisabled: boolean;
+  isHeatMapEnabled: boolean;
+  isGroupActivitiesMode: boolean;
+  groupedActivityIds: Set<string>;
+  toggleActivityInGroup: (activityId: string) => void;
+  sequenceNumber?: number;
 }) {
   const map = useMap();
   const onClickHandler = {
@@ -184,6 +196,18 @@ function Dashboard({
     setGroupedActivityIds(new Set());
   };
 
+  const groupedActivitiesSequence = useMemo(() => {
+    const grouped = activities.filter((a) => groupedActivityIds.has(a.id));
+    const sorted = grouped.sort(
+      (a, b) =>
+        new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+    );
+    return sorted.reduce((map, activity, index) => {
+      map.set(activity.id, index + 1);
+      return map;
+    }, new Map<string, number>());
+  }, [activities, groupedActivityIds]);
+
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
 
@@ -217,6 +241,7 @@ function Dashboard({
       isGroupActivitiesMode={isGroupActivitiesMode}
       groupedActivityIds={groupedActivityIds}
       toggleActivityInGroup={toggleActivityInGroup}
+      sequenceNumber={groupedActivitiesSequence.get(activity.id)}
     />
   ));
 
