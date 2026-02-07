@@ -6,12 +6,26 @@ import PlaceIcon from "@mui/icons-material/Place";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import * as L from "leaflet";
 import { useMap } from "react-leaflet";
 import { useGeoLocation } from "../hooks/useGeoLocation";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useDraggablePosition } from "../hooks/useDraggablePosition";
 import { useState } from "react";
 import { YearSelector } from "./YearSelector";
+
+interface ControlMenuProps {
+  outerBounds: L.LatLngExpression[];
+  setCurrentActivityIndex: (index: string | null) => void;
+  isMarkersDisabled: boolean;
+  setIsMarkersDisabled: (disabled: boolean) => void;
+  isHeatMapEnabled: boolean;
+  setIsHeatMapEnabled: (enabled: boolean) => void;
+  loadPreviousYear: () => void;
+  hasMoreYears: boolean;
+  isFetchingYear: boolean;
+  loadedYears: number[];
+}
 
 const ControlContainer = styled("div")<{ isMinimized?: boolean }>(
   ({ isMinimized }) => ({
@@ -169,7 +183,7 @@ export function ControlMenu({
   hasMoreYears,
   isFetchingYear,
   loadedYears,
-}) {
+}: ControlMenuProps) {
   const map = useMap();
   useAuthAthlete();
   const [position, error] = useGeoLocation(false);
@@ -185,7 +199,7 @@ export function ControlMenu({
   } = useDraggablePosition({ x: 10, y: 10 });
 
   const onClickBack = () => {
-    map.flyToBounds(outerBounds, { animate: true, duration: 1.5 });
+    map.flyToBounds(L.latLngBounds(outerBounds), { animate: true, duration: 1.5 });
     setCurrentActivityIndex(null);
   };
 
