@@ -135,6 +135,29 @@ function Dashboard({
   } | null>(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [groupedActivityIds, setGroupedActivityIds] = useState<Set<string>>(
+    new Set()
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const toggleActivityInGroup = (activityId: string) => {
+    setGroupedActivityIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(activityId)) {
+        newSet.delete(activityId);
+      } else {
+        newSet.add(activityId);
+      }
+      return newSet;
+    });
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const clearGroupedActivities = () => {
+    setGroupedActivityIds(new Set());
+  };
+
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
 
