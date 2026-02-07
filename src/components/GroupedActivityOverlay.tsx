@@ -3,7 +3,9 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import moment from "moment";
+import { useQueries } from "@tanstack/react-query";
 import { Activity } from "../model/ActivityModel";
+import { useAuthAthlete } from "../hooks/useAuthAthlete";
 
 const PREFIX = "GroupedActivityOverlay";
 
@@ -111,6 +113,29 @@ export function GroupedActivityOverlay({
   groupedActivities: Activity[];
   onClose: () => void;
 }) {
+  const { accessToken } = useAuthAthlete();
+
+  // Fetch detailed activities using useQueries
+  const detailedActivitiesQueries = useQueries({
+    queries: groupedActivities.map((activity) => ({
+      queryKey: ["detailedActivity", activity.id],
+      queryFn: async () => {
+        const response = await fetch(
+          `https://www.strava.com/api/v3/activities/${activity.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch detailed activity");
+        return response.json();
+      },
+      enabled: !!accessToken && !!activity.id,
+      staleTime: 1000 * 60 * 60, // 1 hour
+    })),
+  });
+
   // Calculate aggregate statistics
   const totalDistance = groupedActivities.reduce(
     (sum, a) => sum + a.distance,
@@ -126,6 +151,15 @@ export function GroupedActivityOverlay({
   const endDate = new Date(Math.max(...dates.map((d) => d.getTime())));
 
   const activityCount = groupedActivities.length;
+
+  // Calculate elevation statistics
+  const allLoaded = detailedActivitiesQueries.every((q) => q.isSuccess);
+  const anyLoading = detailedActivitiesQueries.some((q) => q.isLoading);
+  const anyError = detailedActivitiesQueries.some((q) => q.isError);
+
+  const totalElevation = detailedActivitiesQueries
+    .filter((q) => q.isSuccess && q.data)
+    .reduce((sum, q) => sum + (q.data.total_elevation_gain || 0), 0);
 
   return (
     <Root className={classes.overlay}>
@@ -148,6 +182,12 @@ export function GroupedActivityOverlay({
           <div>
             <strong>Total Time:</strong>{" "}
             {Number.parseFloat((totalTime / 3600).toString()).toFixed(1)} hours
+          </div>
+          <div>
+            <strong>Total Elevation:</strong>{" "}
+            {anyLoading && "Loading..."}
+            {anyError && "Error loading"}
+            {allLoaded && `${totalElevation.toFixed(0)} m`}
           </div>
           <div>
             <strong>Date Range:</strong>{" "}
