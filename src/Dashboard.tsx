@@ -362,8 +362,6 @@ function Dashboard({
     />
   ));
 
-  console.log(activities);
-
   const groupedActivities = activities.filter((a) =>
     groupedActivityIds.has(a.id)
   );
