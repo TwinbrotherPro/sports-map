@@ -5,10 +5,13 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   Marker,
+  Polygon,
   Polyline,
   TileLayer,
   useMap,
 } from "react-leaflet";
+import convex from "@turf/convex";
+import { points } from "@turf/helpers";
 import { ActivityOverlay } from "./components/ActivityOverlay";
 import { GroupedActivityOverlay } from "./components/GroupedActivityOverlay";
 import { LocationCircle } from "./components/LocationCircle";
@@ -237,6 +240,52 @@ function Dashboard({
     }, new Map<string, number>());
   }, [activities, groupedActivityIds]);
 
+  const groupedBoundary = useMemo(() => {
+    if (groupedActivityIds.size < 3) return null; // Need at least 3 points
+
+    const groupedActivities = activities.filter((a) =>
+      groupedActivityIds.has(a.id)
+    );
+
+    // Use start positions only (simpler, faster)
+    // Convert LatLngExpression to [lat, lng] array format
+    const startPositions: [number, number][] = groupedActivities
+      .map((a) => {
+        if (Array.isArray(a.start_latlng)) {
+          return a.start_latlng as [number, number];
+        }
+        if (
+          a.start_latlng &&
+          typeof a.start_latlng === "object" &&
+          "lat" in a.start_latlng &&
+          "lng" in a.start_latlng
+        ) {
+          return [a.start_latlng.lat, a.start_latlng.lng];
+        }
+        return null;
+      })
+      .filter((pos): pos is [number, number] => pos !== null);
+
+    if (startPositions.length < 3) return null;
+
+    // Convert to Turf.js format [lng, lat]
+    const turfPoints = points(
+      startPositions.map(([lat, lng]) => [lng, lat])
+    );
+
+    const hull = convex(turfPoints);
+
+    // Convert back to Leaflet format [lat, lng]
+    if (hull && hull.geometry.coordinates[0]) {
+      const coords = hull.geometry.coordinates[0].map(
+        ([lng, lat]) => [lat, lng] as [number, number]
+      );
+      return coords;
+    }
+
+    return null;
+  }, [groupedActivityIds, activities]) as [number, number][] | null;
+
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
 
@@ -322,6 +371,17 @@ function Dashboard({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {markers}
+        {groupedBoundary && (
+          <Polygon
+            positions={groupedBoundary}
+            pathOptions={{
+              color: "#9333EA",
+              fillColor: "#9333EA",
+              fillOpacity: 0.15,
+              weight: 2,
+            }}
+          />
+        )}
         <Profile athlete={athlete} />
         <GroupedActivitiesAutoZoom
           groupedActivityIds={groupedActivityIds}
