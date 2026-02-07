@@ -228,6 +228,16 @@ function Dashboard({
     setGroupedActivityIds(new Set());
   };
 
+  // Helper function to sample points from a larger array
+  const samplePoints = (
+    pointsArray: Array<[number, number]>,
+    maxPoints: number
+  ): Array<[number, number]> => {
+    if (pointsArray.length <= maxPoints) return pointsArray;
+    const step = Math.ceil(pointsArray.length / maxPoints);
+    return pointsArray.filter((_, index) => index % step === 0);
+  };
+
   const groupedActivitiesSequence = useMemo(() => {
     const grouped = activities.filter((a) => groupedActivityIds.has(a.id));
     const sorted = grouped.sort(
@@ -247,33 +257,35 @@ function Dashboard({
       groupedActivityIds.has(a.id)
     );
 
-    // Use start positions only (simpler, faster)
-    // Convert LatLngExpression to [lat, lng] array format
-    const startPositions: [number, number][] = groupedActivities
-      .map((a) => {
-        if (Array.isArray(a.start_latlng)) {
-          return a.start_latlng as [number, number];
-        }
-        if (
-          a.start_latlng &&
-          typeof a.start_latlng === "object" &&
-          "lat" in a.start_latlng &&
-          "lng" in a.start_latlng
-        ) {
-          return [a.start_latlng.lat, a.start_latlng.lng];
-        }
-        return null;
-      })
-      .filter((pos): pos is [number, number] => pos !== null);
+    // Use ALL polyline points for accurate boundary
+    const allPoints: [number, number][] = groupedActivities.flatMap((a) => {
+      if (!a.map?.summary_polyline) return [];
+      try {
+        return decoding.decode(a.map.summary_polyline);
+      } catch (e) {
+        console.warn(`Failed to decode polyline for activity ${a.id}:`, e);
+        return [];
+      }
+    });
 
-    if (startPositions.length < 3) return null;
+    if (allPoints.length < 3) return null;
+
+    // Performance optimization: Sample points if too many
+    const sampledPoints =
+      allPoints.length > 500 ? samplePoints(allPoints, 500) : allPoints;
 
     // Convert to Turf.js format [lng, lat]
     const turfPoints = points(
-      startPositions.map(([lat, lng]) => [lng, lat])
+      sampledPoints.map(([lat, lng]) => [lng, lat])
     );
 
+    const start = performance.now();
     const hull = convex(turfPoints);
+    const duration = performance.now() - start;
+
+    if (duration > 100) {
+      console.warn(`Boundary calculation took ${duration}ms`);
+    }
 
     // Convert back to Leaflet format [lat, lng]
     if (hull && hull.geometry.coordinates[0]) {
