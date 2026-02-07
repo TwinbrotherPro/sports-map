@@ -1,9 +1,13 @@
 import { Alert, Button, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
+import { useMemo } from "react";
 import { StatCard } from "../components/StatCard";
+import { CountriesProgressCard } from "../components/CountriesProgressCard";
 import { AuthenticatedPage } from "../components/AuthenticatedPage";
 import { ActivitySymbol } from "../components/ActivitySymbol";
+import { useCountriesData } from "../hooks/useCountriesData";
+import { useVisitedCountries } from "../hooks/useVisitedCountries";
 
 const PageContainer = styled("div")({
   height: "100%",
@@ -44,6 +48,8 @@ const DateRange = styled("div")({
 const StatsGrid = styled("div")({
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+  gridAutoRows: "auto",
+  alignItems: "start",
   gap: "16px",
   marginBottom: "32px",
 
@@ -126,25 +132,60 @@ const LoadMoreButton = styled(Button)({
   },
 });
 
-export function Accomplishments() {
-  return (
-    <AuthenticatedPage
-      description="View your accomplishments and activity statistics."
-      path="accomplishments"
-    >
-      {({ activities, nextPage, hasNextPage, isFetchingNextPage }) => {
-        // No activities
-        if (!activities || activities.length === 0) {
-          return (
-            <PageContainer>
-              <ContentWrapper>
-                <Alert severity="info">
-                  No activities found. Start tracking your workouts on Strava!
-                </Alert>
-              </ContentWrapper>
-            </PageContainer>
-          );
-        }
+// Inner component to use hooks properly
+function AccomplishmentsContent({
+  activities,
+  nextPage,
+  hasNextPage,
+  isFetchingNextPage,
+}: {
+  activities: any[];
+  nextPage: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+}) {
+  // Countries calculation
+  const countriesData = useCountriesData();
+  const visitedCountries = useVisitedCountries(activities, countriesData);
+  const visitedCount = visitedCountries.size;
+  const totalCount = countriesData?.features.length || 293;
+  const percentage = ((visitedCount / totalCount) * 100).toFixed(1);
+
+  // Get list of visited country names
+  const visitedCountryDetails = useMemo(() => {
+    if (!countriesData || visitedCountries.size === 0) return [];
+
+    return countriesData.features
+      .filter((f: any) => visitedCountries.has(f.properties?.SU_A3))
+      .map((f: any) => ({
+        name: f.properties?.SUBUNIT || f.properties?.NAME || "Unknown",
+        continent: f.properties?.CONTINENT || "Unknown",
+        su_a3: f.properties?.SU_A3,
+      }))
+      .sort((a: any, b: any) => a.name.localeCompare(b.name));
+  }, [countriesData, visitedCountries]);
+
+  // Group by continent
+  const continentBreakdown = useMemo(() => {
+    const breakdown: Record<string, number> = {};
+    visitedCountryDetails.forEach((country: any) => {
+      breakdown[country.continent] = (breakdown[country.continent] || 0) + 1;
+    });
+    return breakdown;
+  }, [visitedCountryDetails]);
+
+  // No activities
+  if (!activities || activities.length === 0) {
+    return (
+      <PageContainer>
+        <ContentWrapper>
+          <Alert severity="info">
+            No activities found. Start tracking your workouts on Strava!
+          </Alert>
+        </ContentWrapper>
+      </PageContainer>
+    );
+  }
 
         // Calculate statistics
         const totalDistance =
@@ -243,6 +284,13 @@ export function Accomplishments() {
                   label="Avg Duration"
                   subtext="minutes"
                 />
+                <CountriesProgressCard
+                  visitedCount={visitedCount}
+                  totalCount={totalCount}
+                  percentage={percentage}
+                  visitedCountries={visitedCountryDetails}
+                  continentBreakdown={continentBreakdown}
+                />
               </StatsGrid>
 
               <SectionTitle>Activity Breakdown</SectionTitle>
@@ -293,7 +341,22 @@ export function Accomplishments() {
             </ContentWrapper>
           </PageContainer>
         );
-      }}
+}
+
+export function Accomplishments() {
+  return (
+    <AuthenticatedPage
+      description="View your accomplishments and activity statistics."
+      path="accomplishments"
+    >
+      {({ activities, nextPage, hasNextPage, isFetchingNextPage }) => (
+        <AccomplishmentsContent
+          activities={activities}
+          nextPage={nextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      )}
     </AuthenticatedPage>
   );
 }
