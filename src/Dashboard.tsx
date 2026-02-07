@@ -10,6 +10,7 @@ import {
   useMap,
 } from "react-leaflet";
 import { ActivityOverlay } from "./components/ActivityOverlay";
+import { GroupedActivityOverlay } from "./components/GroupedActivityOverlay";
 import { LocationCircle } from "./components/LocationCircle";
 import { Profile } from "./components/Profile";
 import { ControlMenu } from "./components/Control";
@@ -248,9 +249,19 @@ function Dashboard({
 
   console.log(activities);
 
+  const groupedActivities = activities.filter((a) =>
+    groupedActivityIds.has(a.id)
+  );
+
   return (
     <Root>
-      {currentActivity && (
+      {groupedActivityIds.size > 0 && (
+        <GroupedActivityOverlay
+          groupedActivities={groupedActivities}
+          onClose={clearGroupedActivities}
+        />
+      )}
+      {groupedActivityIds.size === 0 && currentActivity && (
         <ActivityOverlay
           activity={currentActivity}
           setCurrentActivityIndex={setCurrentActivityIndex}
