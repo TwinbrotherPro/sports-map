@@ -13,9 +13,10 @@ interface AuthenticatedPageProps {
   children: (props: {
     activities: Activity[];
     athlete: Athlete;
-    nextPage: () => void;
-    hasNextPage: boolean;
-    isFetchingNextPage: boolean;
+    loadPreviousYear: () => void;
+    hasMoreYears: boolean;
+    isFetchingYear: boolean;
+    loadedYears: number[];
   }) => React.ReactNode;
 }
 
@@ -30,9 +31,10 @@ export function AuthenticatedPage({
     activities,
     activityStatus,
     error,
-    nextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    loadPreviousYear,
+    hasMoreYears,
+    isFetchingYear,
+    loadedYears,
   } = useActivities(accessToken);
 
   // Not authenticated - show connect button
@@ -80,9 +82,10 @@ export function AuthenticatedPage({
         {children({
           activities,
           athlete,
-          nextPage,
-          hasNextPage,
-          isFetchingNextPage,
+          loadPreviousYear,
+          hasMoreYears,
+          isFetchingYear,
+          loadedYears,
         })}
       </>
     );

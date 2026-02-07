@@ -1,12 +1,13 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import moment from 'moment';
 
 /**
- * If no activity call has been made yet, this hooks expects "accessToken" to be part of the URL query
- *
- * Once an activity call has been made it returns the cached activity data.
- *
+ * Fetches activities year by year, starting from the current year.
+ * Each "page" represents a full year of activities.
  */
 export function useActivities(accessToken: string) {
+  const currentYear = new Date().getFullYear();
+
   const {
     data,
     status: activityStatus,
@@ -16,26 +17,40 @@ export function useActivities(accessToken: string) {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["activities"],
-    queryFn: async ({ pageParam }) => {
-      const today = await import("moment").then((moment) =>
-        moment.default().unix()
-      );
+    queryFn: async ({ pageParam: year }) => {
+      const yearStart = moment(`${year}-01-01`).startOf('day').unix();
+      const yearEnd = moment(`${year}-12-31`).endOf('day').unix();
 
-      const response = await fetch(
-        `https://www.strava.com/api/v3/athlete/activities?before=${today}&per_page=100&page=${pageParam}`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
+      // Fetch all activities for this year (internal pagination for high-volume athletes)
+      let allActivities: any[] = [];
+      let page = 1;
+      let hasMore = true;
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch activities: ${response.statusText}`);
+      while (hasMore) {
+        const response = await fetch(
+          `https://www.strava.com/api/v3/athlete/activities?after=${yearStart}&before=${yearEnd}&per_page=200&page=${page}`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch activities: ${response.statusText}`);
+        }
+
+        const activities = await response.json();
+        allActivities = [...allActivities, ...activities];
+        hasMore = activities.length === 200;
+        page++;
       }
 
-      return response.json();
+      return allActivities;
     },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => {
-      // If the last page has 100 items, there might be more pages
-      return lastPage.length === 100 ? pages.length + 1 : undefined;
+    initialPageParam: currentYear,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      // Stop at 2008 (Strava launch year)
+      if (lastPageParam <= 2008) return undefined;
+
+      // Always allow loading previous year
+      return lastPageParam - 1;
     },
     enabled: !!accessToken,
     refetchOnMount: false,
@@ -46,12 +61,16 @@ export function useActivities(accessToken: string) {
   // Flatten all pages into a single array
   const activities = data?.pages.flatMap(page => page) ?? [];
 
+  // Extract loaded years from pageParams (sorted descending)
+  const loadedYears = ((data?.pageParams as number[]) ?? []).sort((a, b) => b - a);
+
   return {
     activities,
     activityStatus,
     error,
-    nextPage: fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
+    loadPreviousYear: fetchNextPage,
+    hasMoreYears: hasNextPage,
+    isFetchingYear: isFetchingNextPage,
+    loadedYears,
   };
 }

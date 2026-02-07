@@ -31,3 +31,6 @@ claude-prompt.txt
 functions-errors.log
 functions-install-errors.log
 install-errors.log
+
+# Ignore beads for now
+/.beads
