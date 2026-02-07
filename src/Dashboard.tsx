@@ -42,15 +42,25 @@ function ActivityMaker({
   setCurrentActivityIndex,
   isMarkersDisabled,
   isHeatMapEnabled,
+  isGroupActivitiesMode,
+  groupedActivityIds,
+  toggleActivityInGroup,
 }) {
   const map = useMap();
   const onClickHandler = {
     click: (event) => {
-      map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
-        animate: true,
-        duration: 1,
-      });
-      setCurrentActivityIndex(activityIndex);
+      if (isGroupActivitiesMode) {
+        // GROUP MODE: Toggle activity in/out of group
+        event.originalEvent?.stopPropagation();  // Prevent map pan
+        toggleActivityInGroup(activity.id);
+      } else {
+        // NORMAL MODE: Zoom and select
+        map.flyToBounds(decoding.decode(activity.map.summary_polyline), {
+          animate: true,
+          duration: 1,
+        });
+        setCurrentActivityIndex(activityIndex);
+      }
     },
   };
 
@@ -80,18 +90,33 @@ function ActivityMaker({
     shadowSize: [41, 41],
   });
 
+  const isGrouped = groupedActivityIds.has(activity.id);
+  const isSelected = currentActivityIndex === activityIndex;
+
+  // Create purple icon for grouped activities
+  const purpleIcon = new leaflet.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
   return (
     <Fragment key={activity.id}>
       <Polyline
         positions={decoding.decode(activity.map.summary_polyline)}
         pathOptions={{
-          color: currentActivityIndex === activityIndex ? "#D43F00" : "#FC4C02",
+          color: isGrouped ? "#7C3AED" : isSelected ? "#D43F00" : "#FC4C02",
           opacity:
-            !isHeatMapEnabled || currentActivityIndex === activityIndex
+            !isHeatMapEnabled || isGrouped || isSelected
               ? 1.0
               : 0.4,
           weight:
-            !isHeatMapEnabled || currentActivityIndex === activityIndex ? 3 : 5,
+            !isHeatMapEnabled || isGrouped || isSelected ? 3 : 5,
         }}
         eventHandlers={onClickHandler}
       />
@@ -99,7 +124,7 @@ function ActivityMaker({
         <Marker
           position={activity.start_latlng}
           eventHandlers={onClickHandler}
-          icon={currentActivityIndex === activityIndex ? darkerOrangeIcon : orangeIcon}
+          icon={isGrouped ? purpleIcon : isSelected ? darkerOrangeIcon : orangeIcon}
         ></Marker>
       )}
     </Fragment>
@@ -189,6 +214,9 @@ function Dashboard({
       setCurrentActivityIndex={setCurrentActivityIndex}
       isMarkersDisabled={isMarkersDisabled}
       isHeatMapEnabled={isHeatMapEnabled}
+      isGroupActivitiesMode={isGroupActivitiesMode}
+      groupedActivityIds={groupedActivityIds}
+      toggleActivityInGroup={toggleActivityInGroup}
     />
   ));
 
