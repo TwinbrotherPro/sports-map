@@ -49,17 +49,7 @@ export function useActivities(accessToken: string) {
       // Stop at 2008 (Strava launch year)
       if (lastPageParam <= 2008) return undefined;
 
-      // If this year had activities, there might be more in previous years
-      // If empty, check if we've found any activities at all
-      if (lastPage.length === 0) {
-        const totalActivities = allPages.flat().length;
-        // If no activities found yet, try previous year (up to 2008)
-        if (totalActivities === 0 && lastPageParam > 2008) {
-          return lastPageParam - 1;
-        }
-        return undefined;
-      }
-
+      // Always allow loading previous year
       return lastPageParam - 1;
     },
     enabled: !!accessToken,
