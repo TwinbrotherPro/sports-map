@@ -8,6 +8,7 @@ import { useQueries } from "@tanstack/react-query";
 import { Activity } from "../model/ActivityModel";
 import { useAuthAthlete } from "../hooks/useAuthAthlete";
 import { useState } from "react";
+import html2canvas from "html2canvas";
 
 const PREFIX = "GroupedActivityOverlay";
 
@@ -116,12 +117,46 @@ export function GroupedActivityOverlay({
   onClose: () => void;
 }) {
   const { accessToken } = useAuthAthlete();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isExporting, setIsExporting] = useState(false);
 
-  const handleExportImage = () => {
-    console.log("Export will be implemented in Part 2");
-    // Actual export logic in Part 2
+  const handleExportImage = async () => {
+    setIsExporting(true);
+    try {
+      const mapContainer = document.querySelector(".mapid");
+      if (!mapContainer) {
+        console.error("Map container not found");
+        alert("Unable to export: Map container not found");
+        return;
+      }
+
+      const canvas = await html2canvas(mapContainer as HTMLElement, {
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#FFFFFF",
+      });
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          alert("Export failed: Could not create image");
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `activity-group-${moment().format("YYYY-MM-DD-HHmmss")}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    } catch (error) {
+      console.error("Export failed:", error);
+
+      // Generic error message for now - Part B will improve this
+      alert(
+        "Export failed. Please try using your browser's screenshot feature instead."
+      );
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Fetch detailed activities using useQueries
