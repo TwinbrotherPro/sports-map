@@ -58,9 +58,9 @@ function ActivityMaker({
     return null;
   }
 
-  const blueIcon = new leaflet.Icon({
+  const orangeIcon = new leaflet.Icon({
     iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
     iconSize: [25, 41],
@@ -69,9 +69,9 @@ function ActivityMaker({
     shadowSize: [41, 41],
   });
 
-  const redIcon = new leaflet.Icon({
+  const darkerOrangeIcon = new leaflet.Icon({
     iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
     iconSize: [25, 41],
@@ -85,7 +85,7 @@ function ActivityMaker({
       <Polyline
         positions={decoding.decode(activity.map.summary_polyline)}
         pathOptions={{
-          color: currentActivityIndex === activityIndex ? "#CB2B3E" : "#2A81CB",
+          color: currentActivityIndex === activityIndex ? "#D43F00" : "#FC4C02",
           opacity:
             !isHeatMapEnabled || currentActivityIndex === activityIndex
               ? 1.0
@@ -99,7 +99,7 @@ function ActivityMaker({
         <Marker
           position={activity.start_latlng}
           eventHandlers={onClickHandler}
-          icon={currentActivityIndex === activityIndex ? redIcon : blueIcon}
+          icon={currentActivityIndex === activityIndex ? darkerOrangeIcon : orangeIcon}
         ></Marker>
       )}
     </Fragment>
