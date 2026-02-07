@@ -289,6 +289,33 @@ function Dashboard({
   const outerBounds = activities.map((activity) => activity.start_latlng);
   const leafletBounds = leaflet.latLngBounds(outerBounds);
 
+  // Edge case: Remove stale grouped activity IDs when activities change (pagination)
+  // This handles the case where grouped activities are filtered out by year selector
+  useEffect(() => {
+    const visibleIds = new Set(activities.map((a) => a.id));
+    const staleGrouped = Array.from(groupedActivityIds).filter(
+      (id) => !visibleIds.has(id)
+    );
+
+    if (staleGrouped.length > 0) {
+      setGroupedActivityIds((prev) => {
+        const newSet = new Set(prev);
+        staleGrouped.forEach((id) => newSet.delete(id));
+        return newSet;
+      });
+    }
+  }, [activities, groupedActivityIds]);
+
+  // Edge case: Clear current activity when grouping is active
+  // Decision: Purple (grouped) takes precedence over red (selected)
+  // When user enters group mode or adds activities to a group, clear single activity selection
+  useEffect(() => {
+    if (groupedActivityIds.size > 0 && currentActivityIndex) {
+      setCurrentActivityIndex(null);
+      setCurrentActivity(null);
+    }
+  }, [groupedActivityIds.size, currentActivityIndex]);
+
   useEffect(() => {
     const activity = activities.find(
       (activity) => activity.id === currentActivityIndex

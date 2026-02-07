@@ -196,6 +196,12 @@ export function GroupedActivityOverlay({
 
   const activityCount = groupedActivities.length;
 
+  // Edge case handling:
+  // - 0 activities: Handled by Dashboard (returns null before rendering overlay)
+  // - 1 activity: Shows in grouped overlay (consistent UI, easier than switching views)
+  // - 2 activities: Shows overlay, but boundary won't appear (convex hull needs 3+ points)
+  // - 3+ activities: Full functionality including boundary
+
   // Calculate elevation statistics
   const allLoaded = detailedActivitiesQueries.every((q) => q.isSuccess);
   const anyLoading = detailedActivitiesQueries.some((q) => q.isLoading);
@@ -204,6 +210,11 @@ export function GroupedActivityOverlay({
   const totalElevation = detailedActivitiesQueries
     .filter((q) => q.isSuccess && q.data)
     .reduce((sum, q) => sum + (q.data.total_elevation_gain || 0), 0);
+
+  // Edge case: Defensive check for no activities (shouldn't happen due to Dashboard check)
+  if (!groupedActivities || groupedActivities.length === 0) {
+    return null;
+  }
 
   return (
     <Root className={classes.overlay}>
