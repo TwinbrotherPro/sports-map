@@ -34,3 +34,5 @@ install-errors.log
 
 # Ignore beads for now
 /.beads
+/ralph-sessions
+ralph-*
