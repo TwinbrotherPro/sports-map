@@ -135,6 +135,7 @@ function Dashboard({
   } | null>(null);
   const [isHeatMapEnabled, setIsHeatMapEnabled] = useState(false);
   const [isMarkersDisabled, setIsMarkersDisabled] = useState(false);
+  const [isGroupActivitiesMode, setIsGroupActivitiesMode] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [groupedActivityIds, setGroupedActivityIds] = useState<Set<string>>(
     new Set()
@@ -237,6 +238,8 @@ function Dashboard({
           setIsMarkersDisabled={setIsMarkersDisabled}
           isHeatMapEnabled={isHeatMapEnabled}
           setIsHeatMapEnabled={setIsHeatMapEnabled}
+          isGroupActivitiesMode={isGroupActivitiesMode}
+          setIsGroupActivitiesMode={setIsGroupActivitiesMode}
           loadPreviousYear={loadPreviousYear}
           hasMoreYears={hasMoreYears}
           isFetchingYear={isFetchingYear}

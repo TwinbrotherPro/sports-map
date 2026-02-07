@@ -4,6 +4,7 @@ import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import PlaceIcon from "@mui/icons-material/Place";
 import MapIcon from "@mui/icons-material/Map";
+import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import * as L from "leaflet";
@@ -21,6 +22,8 @@ interface ControlMenuProps {
   setIsMarkersDisabled: (disabled: boolean) => void;
   isHeatMapEnabled: boolean;
   setIsHeatMapEnabled: (enabled: boolean) => void;
+  isGroupActivitiesMode: boolean;
+  setIsGroupActivitiesMode: (mode: boolean) => void;
   loadPreviousYear: () => void;
   hasMoreYears: boolean;
   isFetchingYear: boolean;
@@ -179,6 +182,8 @@ export function ControlMenu({
   setIsMarkersDisabled,
   isHeatMapEnabled,
   setIsHeatMapEnabled,
+  isGroupActivitiesMode,
+  setIsGroupActivitiesMode,
   loadPreviousYear,
   hasMoreYears,
   isFetchingYear,
@@ -297,6 +302,18 @@ export function ControlMenu({
                 startIcon={<MapIcon />}
               >
                 {isHeatMapEnabled ? "Hide Heatmap" : "Show Heatmap"}
+              </ControlButton>
+              <ControlButton
+                variant="contained"
+                size="small"
+                fullWidth
+                className={
+                  isGroupActivitiesMode ? "toggle-active" : "toggle-inactive"
+                }
+                onClick={() => setIsGroupActivitiesMode(!isGroupActivitiesMode)}
+                startIcon={<GroupWorkIcon />}
+              >
+                {isGroupActivitiesMode ? "Exit Group Mode" : "Group Activities"}
               </ControlButton>
             </ControlButtonGroup>
 
