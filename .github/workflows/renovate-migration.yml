@@ -118,7 +118,7 @@ jobs:
 
       - name: Upload error logs
         if: steps.build.outputs.has_errors == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: error-logs
           path: |
@@ -167,7 +167,7 @@ jobs:
           FUNCTIONS_CREDENTIALS: ${{ secrets.FUNCTIONS_CREDENTIALS }}
 
       - name: Download error logs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: error-logs
 
