@@ -15,7 +15,7 @@
     "@tanstack/react-query-devtools": "5.91.2",
     "@turf/boolean-point-in-polygon": "^7.3.2",
     "@turf/helpers": "^7.3.2",
-    "firebase": "12.7.0",
+    "firebase": "12.9.0",
     "leaflet": "1.9.4",
     "leaflet-simple-map-screenshoter": "0.5.0",
     "moment": "2.30.1",
